@@ -52,11 +52,11 @@ export const AuthContextProvider = ({ children }) => {
           setCurrentUser(user);
           setCurrentUserDetails(result[1]);
           console.log(result[1]);
-          setLoading(false); // Update loading state once data fetching is complete
         } else {
           setCurrentUser(false);
           setCurrentUserDetails({});
         }
+        setLoading(false); // Update loading state once data fetching is complete
       }
     });
 

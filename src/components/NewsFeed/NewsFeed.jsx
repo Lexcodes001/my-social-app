@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import classes from './Newsfeed.module.css';
+import classes from './NewsFeed.module.css';
 import { ThemeContext } from "../../context/ThemeContext";
 import { AuthContext } from "../../context/AuthContext";
 import ThemeToggle from "../UI/Theme/Theme";

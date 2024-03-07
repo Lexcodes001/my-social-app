@@ -1,14 +1,16 @@
 .smRect {
     width: 3rem;
-    height: 6px;
+    height: 8px;
     z-index: 20;
     border-radius: 2rem;
     background-color: var(--border-line);
+    backdrop-filter: blur(1px);
+    border: 1px solid var(--border-line);
 }
 
 .close {
     position: fixed;
-    bottom: 9px;
+    bottom: 15px;
     left: 50%;
     margin-left: -1.5rem;
     /* animation: breath 2s ease-out infinite alternate; */
