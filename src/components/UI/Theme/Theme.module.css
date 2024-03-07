@@ -1,0 +1,215 @@
+.menu {
+    width: fit-content;
+    height: fit-content;
+    z-index: 99;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-one);
+    box-shadow: 0px 20px 40px rgba(0, 0, 0, .5);
+    transition: border-radius .3s ease-out;
+}
+
+.openMenu {
+    padding: .3rem .3rem .3rem 0;
+    border-radius: 10rem 10rem;
+}
+
+.closeMenu {
+    padding: .3rem .6rem .3rem .3rem;
+    border-radius: 50%;
+}
+
+.menu .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: .1rem;
+    margin: 0;
+    cursor: pointer;
+    border-radius: 50%;
+    padding: .3rem 0 .3rem .3rem;
+    text-shadow: 0px 10px 15px rgba(0, 0, 0, .25);
+}
+
+.menu .icon svg {
+    width: 1.1rem;
+}
+
+.toggle__box {
+    cursor: pointer;
+    position: relative;
+    width: 4rem;
+    height: 2rem;
+    border-radius: 2rem;
+    background-color: var(--purple);
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, .25);
+}
+
+.overlay {
+    transform: scale(1);
+    width: 2rem;
+    height: 1.2rem;
+    border-radius: 5rem;
+    position: absolute;
+    top: 5px;
+    right: 12px;
+    z-index: 3;
+    background-color: var(--purple);
+    transition: transform .8s ease .7s;
+
+}
+
+.toggle {
+    width: 1.5rem;
+    height: 1.6rem;
+    border-radius: 1rem;
+    position: absolute;
+    top: 50%;
+    left: 56%;
+    z-index: 1;
+    transform: translateY(-50%);
+    background-color: var(--bg-one);
+    transition: left .5s linear;
+}
+
+.overlay__light {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 5rem;
+    position: absolute;
+    top: 3.5px;
+    right: 73%;
+    z-index: 1;
+    transform: scale(0);
+    background-color: var(--purple);
+    transition: right .8s ease;
+
+}
+
+.toggle__light {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 1rem;
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    transform: translateY(-50%);
+    background-color: var(--bg-one);
+    transition: left .5s linear;
+}
+
+@media only screen and (min-width: 600px) and (max-width: 769px) {
+    .menu {
+        flex-direction: column;
+        box-shadow: 5px 8px 40px rgba(0, 0, 0, .4);
+    }
+
+    .openMenu {
+        padding: 0 .4rem .4rem;
+        border-radius: 10rem 10rem;
+    }
+
+        .closeMenu {
+            padding: .3rem .6rem;
+            border-radius: 50%;
+        }
+
+        .menu .icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: .1rem;
+            margin: 0;
+            cursor: pointer;
+            border-radius: 50%;
+            padding: .3rem 0;
+            text-shadow: 0px 10px 15px rgba(0, 0, 0, .25);
+        }
+    
+        .menu .icon svg {
+            width: 1.1rem;
+        }
+
+    .toggle__box {
+        cursor: pointer;
+        position: relative;
+        width: 2.4rem;
+        height: 5rem;
+        border-radius: 2rem;
+        box-shadow: -5px -10px 15px rgba(0, 0, 0, .25);
+    }
+
+    
+
+    .overlay {
+        transform: scale(1);
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 5rem;
+        position: absolute;
+        top: 57%;
+        left: 37%;
+        z-index: 3;
+        transition: transform 1s ease .7s;
+
+    }
+
+    .toggle {
+        width: 1.8rem;
+        height: 1.9rem;
+        border-radius: 1rem;
+        position: absolute;
+        top: 57%;
+        left: 50%;
+        z-index: 1;
+        transform: translateX(-50%);
+        background-color: var(--bg-one);
+        transition: top .5s linear;
+    }
+
+    .overlay__light {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 5rem;
+        position: absolute;
+        top: 59%;
+        left: 10%;
+        transform: translateX(-50%);
+        z-index: 1;
+        transform: scale(0);
+        background-color: var(--purple);
+        transition: transform .0001s ease;
+
+    }
+
+    .toggle__light {
+        width: 1.9rem;
+        height: 1.8rem;
+        border-radius: 1rem;
+        position: absolute;
+        top: 6%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--bg-one);
+        transition: top .5s linear;
+    }
+}
+
+@media only screen and (min-width: 970px) {
+    .menu {
+        flex-direction: row;
+    }
+    
+    .openMenu {
+        padding: .3rem .3rem .3rem .3rem;
+        border-radius: 10rem 10rem;
+    }
+    
+    .closeMenu {
+        gap: 1rem;
+        padding: .3rem .6rem .3rem .3rem;
+        border-radius: 50%;
+    }
+}

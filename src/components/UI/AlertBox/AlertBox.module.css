@@ -1,0 +1,80 @@
+.info-container {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    height: auto;
+    padding-top: 1.2rem;
+    font-size: 0.8rem;
+    color: var(--dark-blue);
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    z-index: 50;
+}
+
+.alert-box {
+    width: fit-content;
+    max-width: 100%;
+    height: fit-content;
+    padding: 4px 4px;
+    margin: 0 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.3rem;
+    background-color: #adb5bd;
+    box-shadow: 2px 2px 30px rgba(0, 0, 0, .2), -2px -2px 30px rgba(0, 0, 0, .2);
+}
+
+.alert-box .emoticon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: .3rem .4rem .3rem .3rem;
+}
+
+
+.alert-box .txt {
+    color: #c7ced4;
+    width: fit-content;
+    height: fit-content;
+    padding: 7px 10px;
+    margin: 0;
+    border-radius: 0.3rem;
+    background-color: var(--brand);
+}
+
+.alert-box .txt em.bold {
+    color: var(--brand);
+    font-weight: 700;
+    font-size: 0.9rem;
+    font-family: "Cabin-Bold", Courier, monospace;
+}
+
+.alert-box .success {
+    background-color: var(--green);
+}
+
+.alert-box .fail {
+    background-color: var(--soft-red);
+}
+
+.alert-box .close {
+    cursor: pointer;
+    font-family: "Cabin-Bold", Courier, monospace;
+    padding: .5rem .4rem .3rem .4rem;
+}
+
+.alert-box .close svg path {
+    fill: rgba(0, 0, 0, .6);
+}
+
+@media only screen and (min-width: 600px) {
+    .info-container {
+            top: 86%;
+            padding-top: 1.5rem;
+        }
+}

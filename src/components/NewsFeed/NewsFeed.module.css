@@ -1,0 +1,7 @@
+.newsfeed{
+    width: 100%;
+    height: auto;
+    border-radius: .5rem;
+    z-index: 0;
+    /* background-color: var(--surface-2); */
+}

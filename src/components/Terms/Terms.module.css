@@ -1,0 +1,11 @@
+.main h3{
+    color: var(--text-2);
+    background-color: var(--surface-1);
+    width: fit-content;
+    height: .9rem;
+}
+
+.main p{
+    color: var(--text-1);
+    font-size: .8rem;
+}

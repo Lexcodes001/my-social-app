@@ -1,0 +1,54 @@
+.box {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-one);
+}
+
+.img img {
+    width: 25rem;
+    height: fit-content;
+}
+
+.content{
+    display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+}
+
+.msg {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.content span {
+    color: var(--txt-one);
+    font-size: 3rem;
+      font-family: "Futura-Regular", system-ui, Avenir, Helvetica, Arial, sans-serif;
+    width: fit-content;
+    text-shadow: 2px -5px var(--bg-two);
+}
+
+.msg h1 {
+    color: var(--txt-two);
+    font-size: 1.5rem;
+      font-family: "Futura-Regular", system-ui, Avenir, Helvetica, Arial, sans-serif;
+    width: fit-content;
+    height: .9rem;
+}
+
+.msg p {
+    width: 100%;
+    color: var(--txt-two);
+    font-size: .8rem;
+      font-family: "Futura-Regular", system-ui, Avenir, Helvetica, Arial, sans-serif;
+    width: fit-content;
+    height: .9rem;
+}
