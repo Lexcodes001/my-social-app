@@ -1,13 +1,35 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { AuthContext } from "../../context/AuthContext";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { LogoutContext } from "../../pages/Root/Root";
 import classes from "./Navigation.module.css";
+import { useRouteLoaderData } from "react-router-dom";
 
-const UserMenu = () => {
+const UserMenu = ({user}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {loading, currentUser, currentUserDetails } = useContext(AuthContext);
+  const userDetailsObj = useRouteLoaderData("userDetails");
+  const currentUser = userDetailsObj.user;
+  const currentUserDetails = userDetailsObj.result[1];
   const logout = useContext(LogoutContext);
+  const newRef = useRef(null);
+  const imgRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (
+        newRef.current &&
+        !newRef.current.contains(e.target) &&
+        !imgRef.current.contains(e.target)
+      ) {
+        setIsModalOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleOutsideClick);
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, [])
+  
 
   return (
     <>
@@ -23,11 +45,11 @@ const UserMenu = () => {
               opacity: 0,
               y: 30,
             }}
+            ref={newRef}
             className={`${classes["profile"]}`}
           >
             <div className={`${classes["details"]}`}>
               <span>
-                <img src={currentUser.photoURL} alt="dp" />
                 <div>
                   <p className={`${classes[""]} ${classes.firstname}`}>
                     {currentUserDetails.firstName}
@@ -97,14 +119,23 @@ const UserMenu = () => {
         )}
       </AnimatePresence>
       {currentUser && (
-        <img
-          onClick={() => {
-            setIsModalOpen((prev) => !prev);
-          }}
-          className={classes["dp"]}
-          src={currentUser.photoURL}
-          alt=""
-        />
+        <div className={classes["details-box"]}>
+          <span>
+            <p className={classes["fullname"]}>
+              {currentUserDetails.firstName} {currentUserDetails.lastName}
+            </p>
+            <p className={classes["username"]}>{currentUserDetails.username}</p>
+          </span>
+          <img
+            onClick={() => {
+              setIsModalOpen((prev) => !prev);
+            }}
+            className={classes["dp"]}
+            src={currentUser.photoURL}
+            alt=""
+            ref={imgRef}
+          />
+        </div>
       )}
     </>
   );

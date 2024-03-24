@@ -83,14 +83,14 @@ export const AlertContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (isOnline === "false") {
+    if (isOnline === false) {
       dispatchAction(
         "internet_status",
         "static",
         "fail",
         "Connection has been lost!"
       );
-    } else if (isOnline === "") {
+    } else if (isOnline === null) {
       dispatchAction("internet_status", "close", "", "");
     } else {
       dispatchAction(

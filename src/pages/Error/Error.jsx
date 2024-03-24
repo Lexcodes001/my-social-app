@@ -1,31 +1,28 @@
 import { useEffect } from "react";
 import { Link, useNavigate, useRouteError } from "react-router-dom";
-
 import Err404 from "../../assets/images/Error_404.png";
 import Err500 from "../../assets/images/Error_500.png";
-
 import classes from "./Error.module.css";
-import { useContext, useState } from "react";
-import { AlertContext } from "../../context/AlertContext";
+import { useContext } from "react";
+import { useOnlineStatus } from "../../hooks/useOnlineStatus";
 
 const ErrorPage = () => {
-  let title = 'An error occured';
   const error = useRouteError();
   const navigate = useNavigate();
+  const isOnline = useOnlineStatus();
+  const currentUrl = `${window.location.pathname}${window.location.search}`;
 
-  let currentUrl = window.location.pathname + window.location.search;
+  let title = "An error occurred";
+  let message = error.message;
 
-  console.table(error.status);
-
-  if (error.status === 200) {
-    title = 'Internet_Disconnected';
-  } else if (error.status === 500) {
-    
+  if (error.status === 200 || !isOnline) {
+    title = "Network Error, can't connect!";
+    message = "Try connecting to a WiFi or cellular network";
+  } else if (error.status === 404) {
+    title = "Page not found";
   } else {
-    title = 'Page not found';
+    title = "An error occurred";
   }
-
-  // Only call alert if the condition is met
 
   return (
     <>
@@ -35,11 +32,11 @@ const ErrorPage = () => {
             <img src={error.status === 404 ? Err404 : Err500} alt="" />
           </div>
           <div className={classes.content}>
-            <span>{error.status}</span>
+            <span>Error {error.status}</span>
             <div className={classes.msg}>
               <h1>{title}</h1>
               <p>
-                {error.message}, click <Link to={error.status === 500 ? currentUrl : ".."}>here</Link> to {`${error.status === 500 ? "refresh" : "go back"}`}
+                {message}. Click <Link to={currentUrl}>here</Link> to {`${error.status === 200 ? "try again" : "refresh"}`}
               </p>
             </div>
           </div>

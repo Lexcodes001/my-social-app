@@ -15,8 +15,9 @@ import Cookies from "universal-cookie";
 import visibleSvg from "../../assets/images/visible.svg";
 import hiddenSvg from "../../assets/images/hidden.svg";
 import { ThemeContext } from "../../context/ThemeContext";
-import { AuthContext } from "../../context/AuthContext";
 import { AlertContext } from "../../context/AlertContext";
+import Navigate from "../../components/UI/Navigate/Navigate";
+import { color } from "framer-motion";
 
 const cookies = new Cookies();
 
@@ -38,55 +39,108 @@ const Login = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { alertObjState, dispatchAction } = useContext(AlertContext);
 
-  const googleLoginHandler = async () => {
-    const result = await signInWithPopup(auth, provider);
-    cookies.set("auth-token", result.user.refreshToken);
-    navigate("/");
-  };
+  // const googleLoginHandler = async () => {
+  //   const result = await signInWithPopup(auth, provider);
+  //   cookies.set("auth-token", result.user.refreshToken);
+  //   navigate("/");
+  // };
+
+  useEffect(() => {
+    if (data) {
+      if (data[0] === "success") {
+        dispatchAction(
+          "login_status",
+          "dynamic",
+          "success",
+          "Successfully Logged In"
+        );
+
+        navigate("/");
+      } else if (data[0] === "failed") {
+        if (data[1] === "auth/network-request-failed") {
+          dispatchAction(
+            "internet_status",
+            "static",
+            "fail",
+            "Network error, can't connect!"
+          );
+          dispatchAction("login_status", "", "", "");
+          dispatchAction("register_status", "", "", "");
+        } else if (data[1] === "auth/invalid-credential") {
+          dispatchAction(
+            "login_status",
+            "static",
+            "fail",
+            "Invalid Credentials"
+          );
+        } else if (data[1] === "auth/too-many-requests") {
+          dispatchAction(
+            "login_status",
+            "dynamic",
+            "fail",
+            "Too many Invalid requests, try again later"
+          );
+        } else {
+          dispatchAction("login_status", "dynamic", "fail", data[1]);
+        }
+      }
+    } else {
+      return;
+    }
+  }, [data]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { email, psw } = formData;
+    if (isInputValid()) {
+      const { email, psw } = formData;
 
-    try {
-      await signInWithEmailAndPassword(auth, email, psw);
+      try {
+        await signInWithEmailAndPassword(auth, email, psw);
 
-      dispatchAction(
-        "login_status",
-        "dynamic",
-        "success",
-        "Successfully Logged In"
-      );
-
-      navigate("/");
-    } catch (err) {
-      if (err.code === "auth/network-request-failed") {
-        dispatchAction(
-          "internet_status",
-          "static",
-          "fail",
-          "Network error, can't connect!"
-        );
-        dispatchAction("login_status", "", "", "");
-        dispatchAction("register_status", "", "", "");
-      } else if (err.code === "auth/invalid-credential") {
-        dispatchAction(
-          "login_status",
-          "static",
-          "fail",
-          "Invalid Credentials"
-        );
-      }else if (err.code === "auth/too-many-requests") {
         dispatchAction(
           "login_status",
           "dynamic",
-          "fail",
-          "Too many Invalid requests, try again later"
+          "success",
+          "Successfully Logged In"
         );
-      } else {
-        dispatchAction("login_status", "dynamic", "fail", err.code);
+
+        navigate("/");
+      } catch (err) {
+        if (err.code === "auth/network-request-failed") {
+          dispatchAction(
+            "internet_status",
+            "static",
+            "fail",
+            "Network error, can't connect!"
+          );
+          dispatchAction("login_status", "", "", "");
+          dispatchAction("register_status", "", "", "");
+        } else if (err.code === "auth/invalid-credential") {
+          dispatchAction(
+            "login_status",
+            "static",
+            "fail",
+            "Invalid Credentials"
+          );
+        } else if (err.code === "auth/too-many-requests") {
+          dispatchAction(
+            "login_status",
+            "dynamic",
+            "fail",
+            "Too many Invalid requests, try again later"
+          );
+        } else {
+          dispatchAction("login_status", "dynamic", "fail", err.code);
+        }
       }
+    } else {
+      dispatchAction(
+        "login_status",
+        "dynamic",
+        "fail",
+        "Enter your credentials to sign in"
+      );
     }
   };
 
@@ -137,9 +191,10 @@ const Login = () => {
     <div className={classes["authWrapper"]}>
       <div className={classes["formWrapper"]}>
         <span className={classes["title"]}>
+          <Navigate action="backward" />
           <h1>Sign In</h1>
         </span>
-        <form onSubmit={handleSubmit} method="post" className={classes["form"]}>
+        <Form method="post" className={classes["form"]}>
           <div className={classes["input-box"]}>
             <label htmlFor="email">Email Address</label>
             <span className={classes["status"]}>
@@ -183,7 +238,12 @@ const Login = () => {
             <span className={classes["err"]}>{err.email}</span>
           </div>
           <div className={classes["input-box"]}>
-            <label htmlFor="psw">Password</label>
+            <label
+              style={{ color: err.psw && "var(--soft-red)" }}
+              htmlFor="psw"
+            >
+              Password
+            </label>
             <span className={classes["status"]}>
               <button
                 onClick={(e) => {
@@ -257,7 +317,7 @@ const Login = () => {
               className={
                 isSubmitting || !isInputValid() ? "disabled" : undefined
               }
-              disabled={isSubmitting || !isInputValid()}
+              // disabled={isSubmitting || !isInputValid()}
             >
               {isSubmitting ? "Checking..." : "Sign In"}
             </button>
@@ -267,7 +327,7 @@ const Login = () => {
               </p>
             </span>
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   );
@@ -287,10 +347,19 @@ export const action = async ({ request }) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
 
-    navigate("/");
-    return "success";
-
+    return [
+      "success",
+    ];
   } catch (err) {
-    throw json({ title: err.name }, { statusText: err.code }, { status: 500 });
+    console.table(err);
+    if (err.code === "auth/network-request-failed") {
+      return ["failed", err.code];
+    } else if (err.code === "auth/invalid-credential") {
+      return ["failed", err.code];
+    } else if (err.code === "auth/too-many-requests") {
+      return ["failed", err.code];
+    } else {
+      return ["failed", err.code];
+    }
   }
 };

@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate, useNavigation } from "react-router-dom";
+import {
+  Form,
+  Link,
+  useActionData,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
 import arrowBack from "../../assets/images/arrow_back.svg";
 import classes from "./Auth.module.css";
 import { sendPasswordResetEmail } from "firebase/auth";
@@ -8,29 +14,27 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { AlertContext } from "../../context/AlertContext";
 import ThemeToggle from "../../components/UI/Theme/Theme";
 import LogoImage from "../../components/UI/Logo/Logo";
+import Navigate from "../../components/UI/Navigate/Navigate";
 
 const Reset = () => {
   const [email, setEmail] = useState("");
   const [err, setErr] = useState("");
   const navigation = useNavigation();
   const navigate = useNavigate();
+  const data = useActionData();
 
   const isSubmitting = navigation.state === "submitting";
 
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { alertObjState, dispatchAction } = useContext(AlertContext);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    await sendPasswordResetEmail(auth, email)
-      .then(() => {
-        // Password reset email sent!
+  useEffect(() => {
+    if (data) {
+      if (data[0] === "success") {
         dispatchAction("login_status", "dynamic", "success", "Email Sent!");
-        navigate("/auth/login");
-      })
-      .catch((err) => {
-        if (err.code === "auth/network-request-failed") {
+        navigate(-1);
+      } else if (data[0] === "failed") {
+        if (data[1] === "auth/network-request-failed") {
           dispatchAction(
             "internet_status",
             "static",
@@ -39,14 +43,14 @@ const Reset = () => {
           );
           dispatchAction("login_status", "", "", "");
           dispatchAction("register_status", "", "", "");
-        } else if (err.code === "auth/invalid-credential") {
+        } else if (data[1] === "auth/invalid-credential") {
           dispatchAction(
             "login_status",
             "static",
             "fail",
             "Invalid Credentials"
           );
-        } else if (err.code === "auth/too-many-requests") {
+        } else if (data[1] === "auth/too-many-requests") {
           dispatchAction(
             "login_status",
             "dynamic",
@@ -54,10 +58,13 @@ const Reset = () => {
             "Too many Invalid requests, try again later"
           );
         } else {
-          dispatchAction("login_status", "dynamic", "fail", err.code);
+          dispatchAction("login_status", "dynamic", "fail", data[1]);
         }
-      });
-  };
+      }
+    } else {
+      return;
+    }
+  }, [data]);
 
   const handleInputChange = (value) => {
     handleInputValidation(value);
@@ -78,7 +85,6 @@ const Reset = () => {
 
   const isInputValid = () => {
     let isValid = email !== "" && err === "";
-    console.log(isValid);
     return isValid;
   };
 
@@ -87,26 +93,10 @@ const Reset = () => {
       <div className={classes["authWrapper"]}>
         <div className={classes["formWrapper"]}>
           <span className={classes["title"]}>
-            <button onClick={() => navigate(-1)}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24"
-                viewBox="0 -960 960 960"
-                width="24"
-              >
-                <path
-                  fill="var(--txt-two)"
-                  d="m142-480 294 294q15 15 14.5 35T435-116q-15 15-35 15t-35-15L57-423q-12-12-18-27t-6-30q0-15 6-30t18-27l308-308q15-15 35.5-14.5T436-844q15 15 15 35t-15 35L142-480Z"
-                />
-              </svg>
-            </button>
+            <Navigate action="backward" />
             <h1>Reset Password</h1>
           </span>
-          <form
-            onSubmit={handleSubmit}
-            method="post"
-            className={classes["form"]}
-          >
+          <Form method="post" className={classes["form"]}>
             <div className={classes["input-box"]}>
               <label htmlFor="email">Email Address</label>
               <span className={classes["status"]}>
@@ -158,18 +148,27 @@ const Reset = () => {
                 className={`${classes["reset-psw-btn"]}
                   ${isSubmitting || !isInputValid() ? "disabled" : undefined}
                 `}
-                disabled={isSubmitting || !isInputValid()}
+                onClick={() => {
+                  !isInputValid() &&
+                    dispatchAction(
+                      "login_status",
+                      "dynamic",
+                      "fail",
+                      "Input is not a valid email address!"
+                    );
+                    return;
+                }}
               >
-                {isSubmitting ? "Checking..." : "Send Password Reset Email"}
+                {isSubmitting ? "Sending..." : "Send Password Reset Email"}
               </button>
               <span>
                 <p>
-                  <Link to="/auth/signup">Sign Up</Link> |{" "}
+                  <Link to="/auth/signup">Sign Up</Link>  |{"  "}
                   <Link to="/auth/login">Sign In</Link>
                 </p>
               </span>
             </div>
-          </form>
+          </Form>
         </div>
       </div>
     </>
@@ -177,3 +176,15 @@ const Reset = () => {
 };
 
 export default Reset;
+
+export const action = async ({ request }) => {
+  const data = await request.formData();
+  const email = data.get("email");
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    return ["success"];
+  } catch (error) {
+    return ["failed", err.code];
+  }
+};

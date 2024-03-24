@@ -4,8 +4,8 @@ import { ThemeContext } from "../../../context/ThemeContext";
 import { AnimatePresence, motion } from "framer-motion";
 
 const themeObj = {
-  lightTheme: ["light", "grape", "choco"],
-  darkTheme: ["dark", "dim"],
+  lightTheme: ["light", "grape"],
+  darkTheme: ["dark", "dim", "choco"],
 };
 
 const Popup = () => {

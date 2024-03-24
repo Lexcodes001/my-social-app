@@ -100,7 +100,7 @@
     transition: left .5s linear;
 }
 
-@media only screen and (min-width: 600px) and (max-width: 769px) {
+@media only screen and (min-width: 768px) and (max-width: 769px) {
     .menu {
         flex-direction: column;
         box-shadow: 5px 8px 40px rgba(0, 0, 0, .4);

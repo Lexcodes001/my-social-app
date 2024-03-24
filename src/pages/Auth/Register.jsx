@@ -26,6 +26,7 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { AlertContext } from "../../context/AlertContext";
 import ThemeToggle from "../../components/UI/Theme/Theme";
 import LogoImage from "../../components/UI/Logo/Logo";
+import Navigate from "../../components/UI/Navigate/Navigate";
 
 const initialErrData = {
   step1: {
@@ -131,113 +132,169 @@ const Register = () => {
     }
   }, [step, formData]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (data) {
+      if (data[0] === "success") {
+        dispatchAction(
+          "register_status",
+          "dynamic",
+          "success",
+          "User registered successfully!"
+        );
 
-    const {
-      firstName,
-      middleName,
-      lastName,
-      email,
-      psw,
-      gender,
-      dob,
-      address,
-      bio,
-    } = formData.step1;
-
-    const { username, file } = formData.step2;
-    console.log(e.target);
-
-    try {
-      // Create user
-      const res = await createUserWithEmailAndPassword(auth, email, psw);
-
-      // Create a unique image name
-      const date = new Date().getTime();
-      const storageRef = ref(storage, `${username + date}`);
-
-      await uploadBytesResumable(storageRef, file).then(() => {
-        getDownloadURL(storageRef).then(async (downloadURL) => {
-          // Update profile
-          await updateProfile(res.user, {
-            displayName: username,
-            photoURL: downloadURL,
-          });
-
-          // Create user on firestore
-          await setDoc(
-            doc(
-              db,
-              `${middleName.toLowerCase() !== "admin" ? "users" : "admins"}`,
-              res.user.uid
-            ),
-            {
-              uid: res.user.uid,
-              firstName,
-              middleName,
-              lastName,
-              username,
-              email,
-              gender,
-              dob,
-              address,
-              bio,
-              followers: [],
-              following: [],
-              posts: [],
-              personalChats: [],
-              groups: [],
-              listings: [],
-              photoURL: downloadURL,
-              createdAt: serverTimestamp(),
-            }
-          );
-
-          // Create empty user chats on firestore
-          await setDoc(doc(db, "personalChats", res.user.uid), []);
-          await setDoc(doc(db, "personalPosts", res.user.uid), []);
-          await setDoc(doc(db, "listings", res.user.uid), []);
-
+        dispatchAction("login_status", "dynamic", "success", "Logging In...");
+        sendEmailVerification(auth.currentUser).then(() => {
           dispatchAction(
             "register_status",
             "dynamic",
             "success",
-            "User registered successfully!"
+            `A verification mail has been sent to ${formData.step1.email}, ensure you verify your email address for this account`
           );
-
-          dispatchAction(
-            "login_status",
-            "dynamic",
-            "success",
-            "Logging In..."
-          );
-          // sendEmailVerification(auth.currentUser).then(() => {
-          // });
-
-          navigate("/");
         });
-      });
-    } catch (err) {
-      if (err.code === "auth/network-request-failed") {
-        dispatchAction(
-          "internet_status",
-          "static",
-          "fail",
-          "Network error, can't connect!"
-        );
-        dispatchAction("login_status", "", "", "");
-        dispatchAction("register_status", "", "", "");
-      } else if (err.code === "auth/too-many-requests") {
-        dispatchAction(
-          "register_status",
-          "dynamic",
-          "fail",
-          "Too many Invalid requests, try again later"
-        );
-      } else {
-        dispatchAction("register_status", "dynamic", "fail", err.code);
+
+        navigate("/");
+      } else if (data[0] === "failed") {
+        if (data[1] === "auth/network-request-failed") {
+          dispatchAction(
+            "internet_status",
+            "static",
+            "fail",
+            "Network error, can't connect!"
+          );
+          dispatchAction("login_status", "", "", "");
+          dispatchAction("register_status", "", "", "");
+        } else if (data[1] === "auth/too-many-requests") {
+          dispatchAction(
+            "register_status",
+            "dynamic",
+            "fail",
+            "Too many Invalid requests, try again later"
+          );
+        } else {
+          dispatchAction("register_status", "dynamic", "fail", data[1]);
+        }
       }
+    } else {
+      return;
+    }
+  }, [data]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (isStepValid) {
+      const {
+        firstName,
+        middleName,
+        lastName,
+        email,
+        psw,
+        gender,
+        dob,
+        address,
+        bio,
+      } = formData.step1;
+
+      const { username, file } = formData.step2;
+      console.log(e.target);
+
+      try {
+        // Create user
+        const res = await createUserWithEmailAndPassword(auth, email, psw);
+
+        // Create a unique image name
+        const date = new Date().getTime();
+        const storageRef = ref(storage, `${username + date}`);
+
+        await uploadBytesResumable(storageRef, file).then(() => {
+          getDownloadURL(storageRef).then(async (downloadURL) => {
+            // Update profile
+            await updateProfile(res.user, {
+              displayName: username,
+              photoURL: downloadURL,
+            });
+
+            // Create user on firestore
+            await setDoc(
+              doc(
+                db,
+                `${middleName.toLowerCase() !== "admin" ? "users" : "admins"}`,
+                res.user.uid
+              ),
+              {
+                uid: res.user.uid,
+                firstName,
+                middleName,
+                lastName,
+                username,
+                email,
+                gender,
+                dob,
+                address,
+                bio,
+                followers: [],
+                following: [],
+                posts: [],
+                personalChats: [],
+                groups: [],
+                listings: [],
+                photoURL: downloadURL,
+                createdAt: serverTimestamp(),
+              }
+            );
+
+            // Create empty user chats on firestore
+            await setDoc(doc(db, "personalChats", res.user.uid), []);
+            await setDoc(doc(db, "personalPosts", res.user.uid), []);
+            await setDoc(doc(db, "listings", res.user.uid), []);
+
+            dispatchAction(
+              "register_status",
+              "dynamic",
+              "success",
+              "User registered successfully!"
+            );
+
+            dispatchAction(
+              "login_status",
+              "dynamic",
+              "success",
+              "Logging In..."
+            );
+            // sendEmailVerification(auth.currentUser).then(() => {
+            // });
+
+            navigate("/");
+          });
+        });
+      } catch (err) {
+        if (err.code === "auth/network-request-failed") {
+          dispatchAction(
+            "internet_status",
+            "static",
+            "fail",
+            "Network error, can't connect!"
+          );
+          dispatchAction("login_status", "", "", "");
+          dispatchAction("register_status", "", "", "");
+        } else if (err.code === "auth/too-many-requests") {
+          dispatchAction(
+            "register_status",
+            "dynamic",
+            "fail",
+            "Too many Invalid requests, try again later"
+          );
+        } else {
+          dispatchAction("register_status", "dynamic", "fail", err.code);
+        }
+      }
+    } else {
+      dispatchAction(
+        "register_status",
+        "dynamic",
+        "fail",
+        "Complete all required fields"
+      );
     }
   };
 
@@ -384,6 +441,7 @@ const Register = () => {
     <div className={classes["authWrapper"]}>
       <div className={classes["formWrapper"]}>
         <span className={classes["title"]}>
+          <Navigate action="backward" />
           <h1>Sign Up</h1>
         </span>
         <div className={classes["navigationWrapper"]}>
@@ -406,7 +464,7 @@ const Register = () => {
                   width="24"
                 >
                   <path
-                    fill="var(--surface-4)"
+                    fill="var(--surface-1)"
                     d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
                   />
                 </svg>
@@ -433,7 +491,7 @@ const Register = () => {
                   width="24"
                 >
                   <path
-                    fill="var(--surface-4)"
+                    fill="var(--surface-1)"
                     d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
                   />
                 </svg>
@@ -460,7 +518,7 @@ const Register = () => {
                   width="24"
                 >
                   <path
-                    fill="var(--surface-4)"
+                    fill="var(--surface-1)"
                     d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
                   />
                 </svg>
@@ -487,7 +545,7 @@ const Register = () => {
                   width="24"
                 >
                   <path
-                    fill="var(--surface-4)"
+                    fill="var(--surface-1)"
                     d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
                   />
                 </svg>
@@ -497,206 +555,32 @@ const Register = () => {
           </button>
         </div>
         <form onSubmit={handleSubmit} method="post">
-          {step === 1 && (
-            <section className={classes["form-section"]}>
-              <header>
-                <span>Step {step}/4</span>
-                <h2>Basic Information</h2>
-              </header>
-              <main>
-                <div className={classes["input-box"]}>
-                  <label htmlFor="firstName">First Name</label>
-                  <span className={classes["status"]}>
-                    {err.step1.firstName ? (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24"
-                        viewBox="0 -960 960 960"
-                        width="24"
-                      >
-                        <path
-                          fill="var(--soft-red)"
-                          d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
-                        />
-                      </svg>
-                    ) : (
-                      formData.step1.firstName && (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24"
-                          viewBox="0 -960 960 960"
-                          width="24"
-                        >
-                          <path
-                            fill="var(--green)"
-                            d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
-                          />
-                        </svg>
-                      )
-                    )}
-                  </span>
-                  <input
-                    className={
-                      err.step1.firstName ? classes["inputError"] : undefined
-                    }
-                    value={formData.step1.firstName}
-                    onChange={handleChange}
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    placeholder=""
-                  />
-                  <span className={classes["err"]}>{err.step1.firstName}</span>
-                </div>
-
-                <div className={classes["input-box"]}>
-                  <label htmlFor="middleName">Middle Name</label>
-                  <span className={classes["status"]}>
-                    {err.step1.middleName ? (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24"
-                        viewBox="0 -960 960 960"
-                        width="24"
-                      >
-                        <path
-                          fill="var(--soft-red)"
-                          d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
-                        />
-                      </svg>
-                    ) : (
-                      formData.step1.middleName && (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24"
-                          viewBox="0 -960 960 960"
-                          width="24"
-                        >
-                          <path
-                            fill="var(--green)"
-                            d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
-                          />
-                        </svg>
-                      )
-                    )}
-                  </span>
-                  <input
-                    className={
-                      err.step1.middleName ? classes["inputError"] : undefined
-                    }
-                    value={formData.step1.middleName}
-                    onChange={handleChange}
-                    type="text"
-                    id="middleName"
-                    name="middleName"
-                    placeholder=""
-                  />
-                  <span className={classes["err"]}>{err.step1.middleName}</span>
-                </div>
-
-                <div className={classes["input-box"]}>
-                  <label htmlFor="lastName">Last Name</label>
-                  <span className={classes["status"]}>
-                    {err.step1.lastName ? (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24"
-                        viewBox="0 -960 960 960"
-                        width="24"
-                      >
-                        <path
-                          fill="var(--soft-red)"
-                          d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
-                        />
-                      </svg>
-                    ) : (
-                      formData.step1.lastName && (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24"
-                          viewBox="0 -960 960 960"
-                          width="24"
-                        >
-                          <path
-                            fill="var(--green)"
-                            d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
-                          />
-                        </svg>
-                      )
-                    )}
-                  </span>
-                  <input
-                    className={
-                      err.step1.lastName ? classes["inputError"] : undefined
-                    }
-                    value={formData.step1.lastName}
-                    onChange={handleChange}
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    placeholder=""
-                  />
-                  <span className={classes["err"]}>{err.step1.lastName}</span>
-                </div>
-                <div className={classes["input-box"]}>
-                  <label htmlFor="email">Email Address</label>
-                  <span className={classes["status"]}>
-                    {err.step1.email ? (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24"
-                        viewBox="0 -960 960 960"
-                        width="24"
-                      >
-                        <path
-                          fill="var(--soft-red)"
-                          d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
-                        />
-                      </svg>
-                    ) : (
-                      formData.step1.email && (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24"
-                          viewBox="0 -960 960 960"
-                          width="24"
-                        >
-                          <path
-                            fill="var(--green)"
-                            d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
-                          />
-                        </svg>
-                      )
-                    )}
-                  </span>
-                  <input
-                    className={
-                      err.step1.email ? classes["inputError"] : undefined
-                    }
-                    value={formData.step1.email}
-                    onChange={handleChange}
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder=""
-                  />
-                  <span className={classes["err"]}>{err.step1.email}</span>
-                </div>
-                <div className={classes["input-box"]}>
-                  <label htmlFor="psw">Password</label>
-                  <span className={classes["status"]}>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setVisible((prev) => {
-                          return !prev;
-                        });
-                      }}
+          <section
+            className={classes["form-section"]}
+            style={{ display: step === 1 ? "flex" : "none" }}
+          >
+            <header>
+              <span>Step {step}/4</span>
+              <h2>Basic Information</h2>
+            </header>
+            <main>
+              <div className={classes["input-box"]}>
+                <label htmlFor="firstName">First Name</label>
+                <span className={classes["status"]}>
+                  {err.step1.firstName ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24"
+                      viewBox="0 -960 960 960"
+                      width="24"
                     >
-                      <img src={!visible ? visibleSvg : hiddenSvg} alt="" />
-                    </button>
-
-                    {err.step1.psw ? (
+                      <path
+                        fill="var(--soft-red)"
+                        d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
+                      />
+                    </svg>
+                  ) : (
+                    formData.step1.firstName && (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height="24"
@@ -704,174 +588,89 @@ const Register = () => {
                         width="24"
                       >
                         <path
-                          fill="var(--soft-red)"
-                          d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
+                          fill="var(--green)"
+                          d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
                         />
                       </svg>
-                    ) : (
-                      formData.step1.psw && (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24"
-                          viewBox="0 -960 960 960"
-                          width="24"
-                        >
-                          <path
-                            fill="var(--green)"
-                            d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
-                          />
-                        </svg>
-                      )
-                    )}
-                  </span>
-                  <input
-                    className={
-                      err.step1.psw ? classes["inputError"] : undefined
-                    }
-                    value={formData.step1.psw}
-                    onChange={handleChange}
-                    type={visible ? "text" : "password"}
-                    id="psw"
-                    name="psw"
-                    placeholder=""
-                  />
-                  <span className={classes["err"]}>{err.step1.psw}</span>
-                </div>
-                <div className={classes["input-box"]}>
-                  <label htmlFor="dob">Date of Birth</label>
-                  <input
-                    className={
-                      err.step1.dob ? classes["inputError"] : undefined
-                    }
-                    value={formData.step1.dob}
-                    onChange={handleChange}
-                    type="date"
-                    id="dob"
-                    name="dob"
-                    min="1924-01-01"
-                    max="2014-12-31"
-                  />
-                  <span className={classes["err"]}>{err.step1.dob}</span>
-                </div>
-                <div className={classes["input-box"]}>
-                  <label htmlFor="address">Address</label>
-                  <textarea
-                    value={formData.step1.address}
-                    onChange={handleChange}
-                    id="address"
-                    name="address"
-                    placeholder=""
-                  ></textarea>
-                </div>
+                    )
+                  )}
+                </span>
+                <input
+                  className={
+                    err.step1.firstName ? classes["inputError"] : undefined
+                  }
+                  value={formData.step1.firstName}
+                  onChange={handleChange}
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  placeholder=""
+                />
+                <span className={classes["err"]}>{err.step1.firstName}</span>
+              </div>
 
-                <div className={classes["input-box"]}>
-                  <label htmlFor="bio">Write about yourself...</label>
-                  <textarea
-                    value={formData.step1.bio}
-                    onChange={handleChange}
-                    id="bio"
-                    name="bio"
-                    placeholder=""
-                  ></textarea>
-                </div>
-
-                <div className={`${classes["gender-box"]}`}>
-                  <label htmlFor="gender">Gender</label>
-                  <div className={classes["radio-boxes"]}>
-                    <div
-                      className={`${classes["radio-box"]} ${
-                        formData.step1.gender === "male"
-                          ? classes.active
-                          : undefined
-                      }`}
+              <div className={classes["input-box"]}>
+                <label htmlFor="middleName">Middle Name</label>
+                <span className={classes["status"]}>
+                  {err.step1.middleName ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24"
+                      viewBox="0 -960 960 960"
+                      width="24"
                     >
-                      <label htmlFor="male">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24"
-                          viewBox="0 -960 960 960"
-                          width="24"
-                        >
-                          <path
-                            fill={
-                              formData.step1.gender === "male"
-                                ? "var(--surface-4)"
-                                : "var(--text-1)"
-                            }
-                            d="M800-800v240h-80v-103L561-505q19 28 29 59.5t10 65.5q0 92-64 156t-156 64q-92 0-156-64t-64-156q0-92 64-156t156-64q33 0 65 9.5t59 29.5l159-159H560v-80h240ZM380-520q-58 0-99 41t-41 99q0 58 41 99t99 41q58 0 99-41t41-99q0-58-41-99t-99-41Z"
-                          />
-                        </svg>
-                        <p>Male</p>
-                      </label>
-                      <input
-                        className={
-                          err.step1.gender ? classes["inputError"] : undefined
-                        }
-                        onClick={handleChange}
-                        onChange={handleChange}
-                        id="male"
-                        type="radio"
-                        value="male"
-                        name="gender"
-                        checked={formData.step1.gender === "male"}
+                      <path
+                        fill="var(--soft-red)"
+                        d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
                       />
-                    </div>
-                    <div
-                      className={`${classes["radio-box"]} ${
-                        formData.step1.gender === "female"
-                          ? classes.active
-                          : undefined
-                      }`}
+                    </svg>
+                  ) : (
+                    formData.step1.middleName && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24"
+                        viewBox="0 -960 960 960"
+                        width="24"
+                      >
+                        <path
+                          fill="var(--green)"
+                          d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
+                        />
+                      </svg>
+                    )
+                  )}
+                </span>
+                <input
+                  className={
+                    err.step1.middleName ? classes["inputError"] : undefined
+                  }
+                  value={formData.step1.middleName}
+                  onChange={handleChange}
+                  type="text"
+                  id="middleName"
+                  name="middleName"
+                  placeholder=""
+                />
+                <span className={classes["err"]}>{err.step1.middleName}</span>
+              </div>
+
+              <div className={classes["input-box"]}>
+                <label htmlFor="lastName">Last Name</label>
+                <span className={classes["status"]}>
+                  {err.step1.lastName ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24"
+                      viewBox="0 -960 960 960"
+                      width="24"
                     >
-                      <label htmlFor="female">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24"
-                          viewBox="0 -960 960 960"
-                          width="24"
-                        >
-                          <path
-                            fill={
-                              formData.step1.gender === "female"
-                                ? "var(--surface-4)"
-                                : "var(--text-1)"
-                            }
-                            d="M440-120v-80h-80v-80h80v-84q-79-14-129.5-75.5T260-582q0-91 64.5-154.5T480-800q91 0 155.5 63.5T700-582q0 81-50.5 142.5T520-364v84h80v80h-80v80h-80Zm40-320q58 0 99-41t41-99q0-58-41-99t-99-41q-58 0-99 41t-41 99q0 58 41 99t99 41Z"
-                          />
-                        </svg>
-                        <p>Female</p>
-                      </label>
-                      <input
-                        className={
-                          err.step1.gender ? classes["inputError"] : undefined
-                        }
-                        onClick={handleChange}
-                        onChange={handleChange}
-                        id="female"
-                        type="radio"
-                        value="female"
-                        name="gender"
-                        checked={formData.step1.gender === "female"}
+                      <path
+                        fill="var(--soft-red)"
+                        d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
                       />
-                    </div>
-                  </div>
-                  <span className={classes["err"]}>{err.step1.gender}</span>
-                </div>
-              </main>
-            </section>
-          )}
-
-          {step === 2 && (
-            <section className={classes["form-section"]}>
-              <header>
-                <span>Step {step}/4</span>
-                <h2>Profile Information</h2>
-              </header>
-              <main className={`${classes["profile"]}`}>
-                <div className={classes["input-box"]}>
-                  <label htmlFor="username">Username</label>
-                  <span className={classes["status"]}>
-                    {err.step2.username ? (
+                    </svg>
+                  ) : (
+                    formData.step1.lastName && (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height="24"
@@ -879,87 +678,43 @@ const Register = () => {
                         width="24"
                       >
                         <path
-                          fill="var(--soft-red)"
-                          d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
+                          fill="var(--green)"
+                          d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
                         />
                       </svg>
-                    ) : (
-                      formData.step2.username && (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          height="24"
-                          viewBox="0 -960 960 960"
-                          width="24"
-                        >
-                          <path
-                            fill="var(--green)"
-                            d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
-                          />
-                        </svg>
-                      )
-                    )}
-                  </span>
-                  <input
-                    className={
-                      err.step2.username ? classes["inputError"] : undefined
-                    }
-                    value={formData.step2.username}
-                    onChange={handleChange}
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder=""
-                  />
-                  <span className={classes["err"]}>{err.step2.username}</span>
-                </div>
-                <div className={classes["input-box"]}>
-                  <label className={classes["fileLabel"]} htmlFor="file">
-                    <span>
-                      {fileUrl ? "Choose another image" : "Add an Avatar"}
-                    </span>
-                    {fileUrl === null ? (
-                      <img src={AddIcon} alt="" />
-                    ) : (
-                      <img
-                        className={classes["displayed-upload"]}
-                        src={fileUrl}
-                        alt="Your Avatar"
+                    )
+                  )}
+                </span>
+                <input
+                  className={
+                    err.step1.lastName ? classes["inputError"] : undefined
+                  }
+                  value={formData.step1.lastName}
+                  onChange={handleChange}
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  placeholder=""
+                />
+                <span className={classes["err"]}>{err.step1.lastName}</span>
+              </div>
+              <div className={classes["input-box"]}>
+                <label htmlFor="email">Email Address</label>
+                <span className={classes["status"]}>
+                  {err.step1.email ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24"
+                      viewBox="0 -960 960 960"
+                      width="24"
+                    >
+                      <path
+                        fill="var(--soft-red)"
+                        d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
                       />
-                    )}
-                  </label>
-                  <input
-                    style={{ display: "none" }}
-                    type="file"
-                    id="file"
-                    name="file"
-                    onChange={handleChange}
-                  />
-                </div>
-              </main>
-            </section>
-          )}
-
-          {step === 3 && (
-            <section className={classes["form-section"]}>
-              <header>
-                <span>Step {step}/4</span>
-                <h2>Terms and Conditions</h2>
-              </header>
-              <main>
-                <TermsOfService />
-                <PrivacyPolicy />
-                <div className={classes["check-box"]}>
-                  <input
-                    value={formData.step3.termsCheck === "" ? "checked" : ""}
-                    onChange={handleChange}
-                    onClick={handleChange}
-                    type="checkbox"
-                    name="termsCheck"
-                    id="termsCheck"
-                    checked={formData.step3.termsCheck === "checked"}
-                  />
-                  <label className={classes["checkLabel"]} htmlFor="termsCheck">
-                    {formData.step3.termsCheck === "checked" ? (
+                    </svg>
+                  ) : (
+                    formData.step1.email && (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height="24"
@@ -967,94 +722,394 @@ const Register = () => {
                         width="24"
                       >
                         <path
-                          fill="var(--brand)"
-                          d="m424-312 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z"
+                          fill="var(--green)"
+                          d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
                         />
                       </svg>
-                    ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24"
-                        viewBox="0 -960 960 960"
-                        width="24"
-                      >
-                        <path
-                          fill="var(--text-2)"
-                          d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Z"
-                        />
-                      </svg>
-                    )}
-
-                    <p>I accept the Terms of service and Privacy Policy</p>
-                  </label>
-                </div>
-              </main>
-            </section>
-          )}
-
-          {step === 4 && (
-            <section className={classes["form-section"]}>
-              <header>
-                <span>Step {step}/4</span>
-                <h2>Final Check</h2>
-              </header>
-              <main>
-                <div className={classes["review"]}>
-                  <img src={review} alt="" />
-                  <p>
-                    Go back and review all inputs you've filled and then confirm
-                    below to submit. Also an email verification mail has been
-                    sent to your email address, verify your mail to complete
-                    your registration.
-                  </p>
-                </div>
-                <div className={classes["check-box"]}>
-                  <input
-                    value={formData.step4.confirmCheck === "" ? "checked" : ""}
-                    onChange={handleChange}
-                    onClick={handleChange}
-                    type="checkbox"
-                    name="confirmCheck"
-                    id="confirmCheck"
-                    checked={formData.step4.confirmCheck === "checked"}
-                  />
-
-                  <label
-                    className={classes["checkLabel"]}
-                    htmlFor="confirmCheck"
+                    )
+                  )}
+                </span>
+                <input
+                  className={
+                    err.step1.email ? classes["inputError"] : undefined
+                  }
+                  value={formData.step1.email}
+                  onChange={handleChange}
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder=""
+                />
+                <span className={classes["err"]}>{err.step1.email}</span>
+              </div>
+              <div className={classes["input-box"]}>
+                <label htmlFor="psw">Password</label>
+                <span className={classes["status"]}>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setVisible((prev) => {
+                        return !prev;
+                      });
+                    }}
                   >
-                    {formData.step4.confirmCheck === "checked" ? (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24"
-                        viewBox="0 -960 960 960"
-                        width="24"
-                      >
-                        <path
-                          fill="var(--brand)"
-                          d="m424-312 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24"
-                        viewBox="0 -960 960 960"
-                        width="24"
-                      >
-                        <path
-                          fill="var(--text-2)"
-                          d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Z"
-                        />
-                      </svg>
-                    )}
+                    <img src={!visible ? visibleSvg : hiddenSvg} alt="" />
+                  </button>
 
-                    <p>All details entered are correct and accurate</p>
-                  </label>
+                  {err.step1.psw ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24"
+                      viewBox="0 -960 960 960"
+                      width="24"
+                    >
+                      <path
+                        fill="var(--soft-red)"
+                        d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
+                      />
+                    </svg>
+                  ) : (
+                    formData.step1.psw && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24"
+                        viewBox="0 -960 960 960"
+                        width="24"
+                      >
+                        <path
+                          fill="var(--green)"
+                          d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
+                        />
+                      </svg>
+                    )
+                  )}
+                </span>
+                <input
+                  className={err.step1.psw ? classes["inputError"] : undefined}
+                  value={formData.step1.psw}
+                  onChange={handleChange}
+                  type={visible ? "text" : "password"}
+                  id="psw"
+                  name="psw"
+                  placeholder=""
+                />
+                <span className={classes["err"]}>{err.step1.psw}</span>
+              </div>
+              <div className={classes["input-box"]}>
+                <label htmlFor="dob">Date of Birth</label>
+                <input
+                  className={err.step1.dob ? classes["inputError"] : undefined}
+                  value={formData.step1.dob}
+                  onChange={handleChange}
+                  type="date"
+                  id="dob"
+                  name="dob"
+                  min="1924-01-01"
+                  max="2014-12-31"
+                />
+                <span className={classes["err"]}>{err.step1.dob}</span>
+              </div>
+              <div className={classes["input-box"]}>
+                <label htmlFor="address">Address</label>
+                <textarea
+                  value={formData.step1.address}
+                  onChange={handleChange}
+                  id="address"
+                  name="address"
+                  placeholder=""
+                ></textarea>
+              </div>
+
+              <div className={classes["input-box"]}>
+                <label htmlFor="bio">Write about yourself...</label>
+                <textarea
+                  value={formData.step1.bio}
+                  onChange={handleChange}
+                  id="bio"
+                  name="bio"
+                  placeholder=""
+                ></textarea>
+              </div>
+
+              <div className={`${classes["gender-box"]}`}>
+                <label htmlFor="gender">Gender</label>
+                <div className={classes["radio-boxes"]}>
+                  <div
+                    className={`${classes["radio-box"]} ${
+                      formData.step1.gender === "male"
+                        ? classes.active
+                        : undefined
+                    }`}
+                  >
+                    <label htmlFor="male">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24"
+                        viewBox="0 -960 960 960"
+                        width="24"
+                      >
+                        <path
+                          fill={
+                            formData.step1.gender === "male"
+                              ? "var(--surface-1)"
+                              : "var(--text-1)"
+                          }
+                          d="M800-800v240h-80v-103L561-505q19 28 29 59.5t10 65.5q0 92-64 156t-156 64q-92 0-156-64t-64-156q0-92 64-156t156-64q33 0 65 9.5t59 29.5l159-159H560v-80h240ZM380-520q-58 0-99 41t-41 99q0 58 41 99t99 41q58 0 99-41t41-99q0-58-41-99t-99-41Z"
+                        />
+                      </svg>
+                      <p>Male</p>
+                    </label>
+                    <input
+                      className={
+                        err.step1.gender ? classes["inputError"] : undefined
+                      }
+                      onClick={handleChange}
+                      onChange={handleChange}
+                      id="male"
+                      type="radio"
+                      value="male"
+                      name="gender"
+                      checked={formData.step1.gender === "male"}
+                    />
+                  </div>
+                  <div
+                    className={`${classes["radio-box"]} ${
+                      formData.step1.gender === "female"
+                        ? classes.active
+                        : undefined
+                    }`}
+                  >
+                    <label htmlFor="female">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24"
+                        viewBox="0 -960 960 960"
+                        width="24"
+                      >
+                        <path
+                          fill={
+                            formData.step1.gender === "female"
+                              ? "var(--surface-1)"
+                              : "var(--text-1)"
+                          }
+                          d="M440-120v-80h-80v-80h80v-84q-79-14-129.5-75.5T260-582q0-91 64.5-154.5T480-800q91 0 155.5 63.5T700-582q0 81-50.5 142.5T520-364v84h80v80h-80v80h-80Zm40-320q58 0 99-41t41-99q0-58-41-99t-99-41q-58 0-99 41t-41 99q0 58 41 99t99 41Z"
+                        />
+                      </svg>
+                      <p>Female</p>
+                    </label>
+                    <input
+                      className={
+                        err.step1.gender ? classes["inputError"] : undefined
+                      }
+                      onClick={handleChange}
+                      onChange={handleChange}
+                      id="female"
+                      type="radio"
+                      value="female"
+                      name="gender"
+                      checked={formData.step1.gender === "female"}
+                    />
+                  </div>
                 </div>
-              </main>
-            </section>
-          )}
+                <span className={classes["err"]}>{err.step1.gender}</span>
+              </div>
+            </main>
+          </section>
+
+          <section
+            className={classes["form-section"]}
+            style={{ display: step === 2 ? "flex" : "none" }}
+          >
+            <header>
+              <span>Step {step}/4</span>
+              <h2>Profile Information</h2>
+            </header>
+            <main className={`${classes["profile"]}`}>
+              <div className={classes["input-box"]}>
+                <label htmlFor="username">Username</label>
+                <span className={classes["status"]}>
+                  {err.step2.username ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24"
+                      viewBox="0 -960 960 960"
+                      width="24"
+                    >
+                      <path
+                        fill="var(--soft-red)"
+                        d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240Zm40 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
+                      />
+                    </svg>
+                  ) : (
+                    formData.step2.username && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24"
+                        viewBox="0 -960 960 960"
+                        width="24"
+                      >
+                        <path
+                          fill="var(--green)"
+                          d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"
+                        />
+                      </svg>
+                    )
+                  )}
+                </span>
+                <input
+                  className={
+                    err.step2.username ? classes["inputError"] : undefined
+                  }
+                  value={formData.step2.username}
+                  onChange={handleChange}
+                  type="text"
+                  id="username"
+                  name="username"
+                  placeholder=""
+                />
+                <span className={classes["err"]}>{err.step2.username}</span>
+              </div>
+              <div className={classes["input-box"]}>
+                <label className={classes["fileLabel"]} htmlFor="file">
+                  <span>
+                    {fileUrl ? "Choose another image" : "Add an Avatar"}
+                  </span>
+                  {fileUrl === null ? (
+                    <img src={AddIcon} alt="" />
+                  ) : (
+                    <img
+                      className={classes["displayed-upload"]}
+                      src={fileUrl}
+                      alt="Your Avatar"
+                    />
+                  )}
+                </label>
+                <input
+                  style={{ display: "none" }}
+                  type="file"
+                  id="file"
+                  name="file"
+                  onChange={handleChange}
+                />
+              </div>
+            </main>
+          </section>
+
+          <section
+            className={classes["form-section"]}
+            style={{ display: step === 3 ? "flex" : "none" }}
+          >
+            <header>
+              <span>Step {step}/4</span>
+              <h2>Terms and Conditions</h2>
+            </header>
+            <main>
+              <TermsOfService />
+              <PrivacyPolicy />
+              <div className={classes["check-box"]}>
+                <input
+                  value={formData.step3.termsCheck === "" ? "checked" : ""}
+                  onChange={handleChange}
+                  onClick={handleChange}
+                  type="checkbox"
+                  name="termsCheck"
+                  id="termsCheck"
+                  checked={formData.step3.termsCheck === "checked"}
+                />
+                <label className={classes["checkLabel"]} htmlFor="termsCheck">
+                  {formData.step3.termsCheck === "checked" ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24"
+                      viewBox="0 -960 960 960"
+                      width="24"
+                    >
+                      <path
+                        fill="var(--brand)"
+                        d="m424-312 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24"
+                      viewBox="0 -960 960 960"
+                      width="24"
+                    >
+                      <path
+                        fill="var(--text-2)"
+                        d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Z"
+                      />
+                    </svg>
+                  )}
+
+                  <p>I accept the Terms of service and Privacy Policy</p>
+                </label>
+              </div>
+            </main>
+          </section>
+
+          <section
+            className={classes["form-section"]}
+            style={{ display: step === 4 ? "flex" : "none" }}
+          >
+            <header>
+              <span>Step {step}/4</span>
+              <h2>Final Check</h2>
+            </header>
+            <main>
+              <div className={classes["review"]}>
+                <img src={review} alt="" />
+                <p>
+                  Go back and review all inputs you've filled and then confirm
+                  below to submit. Also an email verification mail has been sent
+                  to your email address, verify your mail to complete your
+                  registration.
+                </p>
+              </div>
+              <div className={classes["check-box"]}>
+                <input
+                  value={formData.step4.confirmCheck === "" ? "checked" : ""}
+                  onChange={handleChange}
+                  onClick={handleChange}
+                  type="checkbox"
+                  name="confirmCheck"
+                  id="confirmCheck"
+                  checked={formData.step4.confirmCheck === "checked"}
+                />
+
+                <label className={classes["checkLabel"]} htmlFor="confirmCheck">
+                  {formData.step4.confirmCheck === "checked" ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24"
+                      viewBox="0 -960 960 960"
+                      width="24"
+                    >
+                      <path
+                        fill="var(--brand)"
+                        d="m424-312 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24"
+                      viewBox="0 -960 960 960"
+                      width="24"
+                    >
+                      <path
+                        fill="var(--text-2)"
+                        d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Z"
+                      />
+                    </svg>
+                  )}
+
+                  <p>All details entered are correct and accurate</p>
+                </label>
+              </div>
+            </main>
+          </section>
 
           <div className={classes["formBtns"]}>
             <p>
@@ -1077,13 +1132,19 @@ const Register = () => {
                   onChange={handleChange}
                   type="button"
                   onClick={() => {
-                    setStep(step + 1);
+                    isStepValid
+                      ? setStep(step + 1)
+                      : dispatchAction(
+                          "register_status",
+                          "dynamic",
+                          "fail",
+                          "Complete all required fields"
+                        );;
                   }}
                   className={`${classes["next"]} ${
                     !isStepValid ? "disabled" : undefined
                   }`}
                   value={`Next`}
-                  disabled={!isStepValid}
                 />
               ) : (
                 <button
@@ -1091,7 +1152,15 @@ const Register = () => {
                   className={
                     isSubmitting || !isStepValid ? "disabled" : undefined
                   }
-                  disabled={isSubmitting || !isStepValid}
+                  onClick={() => {
+                    !isStepValid &&
+                      dispatchAction(
+                        "register_status",
+                        "dynamic",
+                        "fail",
+                        "Complete all required fields"
+                      );
+                  }}
                 >
                   {isSubmitting ? "Submitting..." : "Submit"}
                 </button>
@@ -1105,3 +1174,97 @@ const Register = () => {
 };
 
 export default Register;
+
+export const action = async ({ request }) => {
+  const data = await request.formData();
+  const authData = {
+    email: data.get("email"),
+    password: data.get("psw"),
+    firstName: data.get("firstName"),
+    middleName: data.get("middleName"),
+    lastName: data.get("lastName"),
+    gender: data.get("gender"),
+    dob: data.get("dob"),
+    address: data.get("address"),
+    bio: data.get("bio"),
+    username: data.get("username"),
+    file: data.get("file"),
+  };
+
+  const {
+    firstName,
+    middleName,
+    lastName,
+    email,
+    password,
+    gender,
+    dob,
+    address,
+    bio,
+    username,
+    file,
+  } = authData;
+
+  try {
+    // Create user
+    const res = await createUserWithEmailAndPassword(auth, email, password);
+
+    // Create a unique image name
+    const date = new Date().getTime();
+    const storageRef = ref(storage, `${username + date}`);
+
+    await uploadBytesResumable(storageRef, file).then(() => {
+      getDownloadURL(storageRef).then(async (downloadURL) => {
+        // Update profile
+        await updateProfile(res.user, {
+          displayName: username,
+          photoURL: downloadURL,
+        });
+
+        // Create user on firestore
+        await setDoc(
+          doc(
+            db,
+            `${middleName.toLowerCase() !== "admin" ? "users" : "admins"}`,
+            res.user.uid
+          ),
+          {
+            uid: res.user.uid,
+            firstName,
+            middleName,
+            lastName,
+            username,
+            email,
+            gender,
+            dob,
+            address,
+            bio,
+            followers: [],
+            following: [],
+            posts: [],
+            personalChats: [],
+            groups: [],
+            listings: [],
+            photoURL: downloadURL,
+            createdAt: serverTimestamp(),
+          }
+        );
+
+        // Create empty user chats on firestore
+        await setDoc(doc(db, "personalChats", res.user.uid), []);
+        await setDoc(doc(db, "personalPosts", res.user.uid), []);
+        await setDoc(doc(db, "listings", res.user.uid), []);
+
+        return ["success"];
+      });
+    });
+  } catch (err) {
+    if (err.code === "auth/network-request-failed") {
+      return ["failed", err.code];
+    } else if (err.code === "auth/too-many-requests") {
+      return ["failed", err.code];
+    } else {
+      return ["failed", err.code];
+    }
+  }
+};

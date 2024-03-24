@@ -1,11 +1,13 @@
 import { useContext } from "react";
 import classes from './NewsFeed.module.css';
 import { ThemeContext } from "../../context/ThemeContext";
-import { AuthContext } from "../../context/AuthContext";
 import ThemeToggle from "../UI/Theme/Theme";
+import { useRouteLoaderData } from "react-router-dom";
 
 const NewsFeed = () => {
-  const { currentUser, currentUserRole } = useContext(AuthContext);
+  const userDetailsObj = useRouteLoaderData("userDetails");
+  const currentUserDetails = userDetailsObj.result[1];
+  const currentUserRole = userDetailsObj.result[0];
 
   const { theme, toggleTheme } = useContext(ThemeContext);
   return (

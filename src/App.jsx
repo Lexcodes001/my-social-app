@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,10 +11,10 @@ import Notifications from "./pages/Notifications/Notifications";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import NewsFeed from "./components/NewsFeed/NewsFeed";
 import ErrorPage from "./pages/Error/Error";
-import Home from "./components/Home/Home";
+import Home, { loader as userDetailsLoader } from "./components/Home/Home";
 import ProtectedRoute from "./components/Actions/ProtectedRoute";
 import Auth from "./pages/Auth/Auth";
-import Reset from "./pages/Auth/Reset";
+import Reset, { action as resetAction } from "./pages/Auth/Reset";
 
 const router = createBrowserRouter([
   {
@@ -25,7 +25,9 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
+        id: "userDetails",
         element: <ProtectedRoute isAuth={false} element={<Home />} />,
+        loader: userDetailsLoader,
         children: [
           {
             path: "",
@@ -60,6 +62,7 @@ const router = createBrowserRouter([
           {
             path: "login",
             element: <Login />,
+            action: loginAction,
           },
           {
             path: "signup",
@@ -68,6 +71,7 @@ const router = createBrowserRouter([
           {
             path: "reset",
             element: <Reset />,
+            action: resetAction,
           },
         ],
       },

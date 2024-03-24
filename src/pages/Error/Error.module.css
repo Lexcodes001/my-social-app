@@ -6,18 +6,21 @@
     justify-content: center;
     align-items: center;
     background-color: var(--bg-one);
+    grid-row: 1 / -1;
+    grid-column: 1 / -1;
 }
 
 .img img {
     width: 25rem;
     height: fit-content;
+    filter: grayscale(0.7);
 }
 
-.content{
+.content {
     display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .msg {
@@ -29,26 +32,28 @@
 }
 
 .content span {
-    color: var(--txt-one);
-    font-size: 3rem;
-      font-family: "Futura-Regular", system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    font-family: "Bulgaria", system-ui, Avenir, Helvetica, Arial, sans-serif;
     width: fit-content;
     text-shadow: 2px -5px var(--bg-two);
 }
 
 .msg h1 {
-    color: var(--txt-two);
+    color: var(--text-1);
     font-size: 1.5rem;
-      font-family: "Futura-Regular", system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-family: "Futura-Regular", system-ui, Avenir, Helvetica, Arial, sans-serif;
     width: fit-content;
     height: .9rem;
 }
 
 .msg p {
     width: 100%;
-    color: var(--txt-two);
-    font-size: .8rem;
-      font-family: "Futura-Regular", system-ui, Avenir, Helvetica, Arial, sans-serif;
+    color: var(--text-2);
+    font-size: .7rem;
+    font-family: "Futura-Regular", system-ui, Avenir, Helvetica, Arial, sans-serif;
     width: fit-content;
     height: .9rem;
+    font-style: italic;
 }

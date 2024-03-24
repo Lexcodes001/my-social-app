@@ -37,18 +37,18 @@ export const AlertBox = ({ arr, filteredArr }) => {
           scale: 1,
           opacity: 1,
           left: `${
-            window.innerWidth < 600
+            window.innerWidth < 769
               ? "50%"
-              : window.innerWidth > 969
+              : window.innerWidth > 991
               ? "50%"
               : window.innerWidth > 769
               ? "50%"
               : "50%"
           }`,
           x: `${
-            window.innerWidth < 600
+            window.innerWidth < 769
               ? "-50%"
-              : window.innerWidth > 969
+              : window.innerWidth > 991
               ? "-50%"
               : window.innerWidth > 769
               ? "-50%"

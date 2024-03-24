@@ -45,7 +45,7 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
-      if (!isOnline) {
+      if (isOnline) {
         if (user) {
           const result = await getMemberData(user.uid);
           setCurrentUserRole(result[0]);
@@ -69,7 +69,7 @@ export const AuthContextProvider = ({ children }) => {
     <AuthContext.Provider
       value={{ currentUser, currentUserRole, currentUserDetails, loading }}
     >
-      {loading ? <Loader style="overlay" /> : children}
+      {!loading ? <Loader style="overlay" /> : children}
     </AuthContext.Provider>
   );
 };

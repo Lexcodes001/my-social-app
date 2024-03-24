@@ -1,16 +1,14 @@
 import classes from "./SideMenu.module.css";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useRouteLoaderData } from "react-router-dom";
 import { useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
 import ThemeToggle from "../UI/Theme/Theme";
 import Hamburger from "hamburger-react";
 import { motion } from "framer-motion";
 import UserMenu from "../Navbar/UserMenu";
 
-const SideMenu = ({ isOpen, setIsOpen }) => {
-  const { loading, currentUser, currentUserRole, currentUserDetails } =
-    useContext(AuthContext);
-  // console.log(currentUserDetails);
+const SideMenu = ({ isOpen, setIsOpen, user }) => {
+  console.log(user);
+  const currentUserDetails = user.result[1];
   const currentLinks = {
     isAuth: [
       {
@@ -99,7 +97,7 @@ const SideMenu = ({ isOpen, setIsOpen }) => {
             />
           </svg>
         ),
-        url: `profile/${!loading && currentUserDetails.username}`,
+        url: `profile/${currentUserDetails.username}`,
         text: "My Profile",
         end: false,
       },
@@ -128,12 +126,20 @@ const SideMenu = ({ isOpen, setIsOpen }) => {
         animate={{
           opacity: 1,
           x: 0,
-          transition: {type: "tween", when: "beforeChildren", staggerChildren: 1 },
+          transition: {
+            type: "tween",
+            when: "beforeChildren",
+            staggerChildren: 1,
+          },
         }}
         exit={{
           opacity: 0,
           x: -30,
-          transition: {type: "tween", when: "afterChildren", staggerChildren: 1 },
+          transition: {
+            type: "tween",
+            when: "afterChildren",
+            staggerChildren: 1,
+          },
         }}
         className={`${classes["menu-container"]}`}
       >
@@ -152,11 +158,11 @@ const SideMenu = ({ isOpen, setIsOpen }) => {
         >
           <motion.div className={`${classes["icons"]}`}>
             <div className={classes["logoText"]}>
-            <Link>
-              <UserMenu />
-            </Link>
+              <Link>
+                <UserMenu />
+              </Link>
               Trendbyte
-              </div>
+            </div>
             <button
               style={{
                 border: `2px solid ${
@@ -189,22 +195,22 @@ const SideMenu = ({ isOpen, setIsOpen }) => {
           <motion.div className={classes["details"]}>
             <motion.div className={`${classes["names"]}`}>
               <motion.div className={`${classes["firstname"]}`}>
-                Welcome {!loading && currentUserDetails.firstName}!
+                Welcome {currentUserDetails.firstName}!
               </motion.div>
               <motion.div className={`${classes["username"]}`}>
-                @{!loading && currentUser.displayName}
+                @{currentUserDetails.username}
               </motion.div>
             </motion.div>
             <motion.div className={`${classes["follows"]}`}>
               <p>
                 <span className={classes["count"]}>
-                  {!loading && currentUserDetails.followers.length}
+                  {currentUserDetails.followers.length}
                 </span>
                 <span>followers</span>
               </p>
               <p>
                 <span className={classes["count"]}>
-                  {!loading && currentUserDetails.following.length}
+                  {currentUserDetails.following.length}
                 </span>
                 <span>following</span>
               </p>
@@ -240,10 +246,8 @@ const SideMenu = ({ isOpen, setIsOpen }) => {
             </NavLink>
           ))}
         </motion.div>
-        <motion.div
-          className={`${classes["bottom"]}`}
-        >
-          <ThemeToggle style={"close"} />
+        <motion.div className={`${classes["bottom"]} ${classes.user}`}>
+          {/* <UserMenu user={user}/> */}
         </motion.div>
       </motion.div>
     </>
