@@ -54,7 +54,8 @@ export const loader = async () => {
     return json({ user, result });
   } catch (error) {
     console.error("Error fetching user data:", error);
-    throw json({ message: error.message }, { status: error.status || 500 });
+    return null;
+    //throw json({ message: error.message }, { status: error.status || 500 });
   }
 };
 

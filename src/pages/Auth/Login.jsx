@@ -46,6 +46,7 @@ const Login = () => {
   // };
 
   useEffect(() => {
+    console.log('Execute!')
     if (data) {
       if (data[0] === "success") {
         dispatchAction(

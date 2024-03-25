@@ -13,7 +13,7 @@ const NewsFeed = () => {
   return (
     <>
       <div className={classes["newsfeed"]}>
-        <span>currently logged in as {currentUserRole} </span>
+        <span>currently logged in as</span>
         <p>This is the NewsFeed</p>
         <div>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis laoreet
