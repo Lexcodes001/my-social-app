@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 
 export function useOnlineStatus() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isFirst, setIsFirst] = useState(true);
 
   useEffect(() => {
     const handleOnline = () => {
-      setIsOnline(true);
+      !isFirst && setIsOnline(true);
+      isFirst && setIsFirst(false);
       refreshPage();
     };
 
