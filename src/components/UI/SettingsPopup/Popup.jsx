@@ -43,21 +43,8 @@ const Popup = () => {
 
   return (
     <>
-      {!isOpen ? (
-        <motion.span
-          whileHover={{ scale: 1.3 }}
-          drag="y"
-          dragConstraints={{ bottom: 0, top: 10 }}
-          dragSnapToOrigin
-          dragElastic={0.2}
-          dragDirectionLock
-          onDirectionLock={(axis) => console.log(axis)}
-          onDragEnd={(axis) => setIsOpen(true)}
-          //   onClick={() => setIsOpen(true)}
-          className={`${classes["smRect"]} ${classes["close"]}`}
-        ></motion.span>
-      ) : (
-        <AnimatePresence>
+      <AnimatePresence>
+        {isOpen && (
           <div
             initial={{ opacity: 0 }}
             animate={{
@@ -69,32 +56,29 @@ const Popup = () => {
             onClick={() => setIsOpen(false)}
             className={classes["overlay"]}
           ></div>
-          <motion.main
-            initial={{ opacity: 0, y: 50 }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            exit={{
-              opacity: 0,
-              y: 50,
-            }}
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 10 }}
-            dragDirectionLock
-            // onDirectionLock={(axis) => console.log(axis)}
-            onDragEnd={(e, { offset, velocity }) => {
-              if (offset.y > 130) {
-                setIsOpen(false);
-              } else {
-                return;
-              }
-            }}
-            className={classes["popup"]}
-          >
-            <motion.span
-              className={`${classes["smRect"]} ${classes["open"]}`}
-            ></motion.span>
+        )}
+        <motion.div
+          drag="y"
+          dragConstraints={{ bottom: 10, top: 10 }}
+          dragSnapToOrigin
+          dragElastic={0.4}
+          dragDirectionLock
+          onDirectionLock={(axis) => console.log(axis)}
+          onDragEnd={(e, { offset, velocity }) => {
+            console.log(offset.y);
+            if (offset.y > 130) {
+              setIsOpen(false);
+            } else if (offset.y < 130) {
+              setIsOpen(true);
+            }
+          }}
+          className={`${classes["popup"]} ${
+            isOpen ? classes["open"] : classes["close"]
+          }`}
+          //   onClick={() => setIsOpen(true)}
+        >
+          <motion.span className={classes["smRect"]}></motion.span>
+          <motion.main className={classes["popup-box"]}>
             <section className={classes["theme"]}>
               <h2>Select Theme:</h2>
               <div className={classes["optionBox"]}>
@@ -295,8 +279,8 @@ const Popup = () => {
               </section>
             )}
           </motion.main>
-        </AnimatePresence>
-      )}
+        </motion.div>
+      </AnimatePresence>
     </>
   );
 };

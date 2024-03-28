@@ -22,6 +22,8 @@ const Home = () => {
   const navigate = useNavigate();
   const isOnline = useOnlineStatus();
   const online = navigator.onLine;
+
+  console.log(navigation.state);
   
   const user = useRouteLoaderData("userDetails");
   useEffect(() => {

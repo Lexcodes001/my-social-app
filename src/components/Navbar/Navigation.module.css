@@ -2,7 +2,7 @@
     width: 100%;
     height: auto;
     background-color: transparent;
-    z-index: 20;
+    z-index: 50;
     position: fixed;
     top: 0;
 }
@@ -144,11 +144,12 @@
     width: fit-content;
     height: fit-content;
     position: absolute;
-    top: 120%;
-    right: 0;
+    top: 133%;
+    right: -4px;
     background-color: var(--surface-2);
     border-radius: .5rem;
     box-shadow: 0 6px 20px var(--opaq);
+    border: 1px solid var(--text-2);
 }
 
 .profile::after {
@@ -156,9 +157,9 @@
     position: absolute;
     bottom: 100%;
     right: 8%;
-    border-width: 5px;
+    border-width: 7px;
     border-style: solid;
-    border-color: transparent transparent var(--surface-2) transparent;
+    border-color: transparent transparent var(--text-2) transparent;
 }
 
 .profile .details {
@@ -234,7 +235,7 @@
 }
 
 .profile .logout:hover {
-    color: #adb5bd;
+    color: var(--text-2);
     background-color: var(--soft-red);
 }
 
@@ -306,7 +307,7 @@
         display: flex;
     }
 
-    .profile {
+    /* .profile {
         top: 0;
         left: 130%;
         border: 1px solid var(--text-2);
@@ -320,7 +321,7 @@
         border-width: 7px;
         border-style: solid;
         border-color: transparent var(--text-1) transparent transparent;
-    }
+    } */
 
     .mobile {
         display: none;
@@ -364,10 +365,5 @@
         color: var(--brand);
         font-family: "Futura-Bold", system-ui, Avenir, Helvetica, Arial, sans-serif;
         letter-spacing: 1px;
-    }
-
-    .profile {
-        top: 40%;
-        left: 0;
     }
 }

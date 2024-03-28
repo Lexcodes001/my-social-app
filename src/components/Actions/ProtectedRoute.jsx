@@ -4,40 +4,35 @@ import {
   Await,
   useNavigation,
 } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
-import Loader from "../UI/Loader/Loader"; // Import your loader component
+import { useEffect, useState } from "react";
+import Loader from "../UI/Loader/Loader";
 
 const ProtectedRoute = ({ element }) => {
   const userDetailsObj = useRouteLoaderData("userDetails");
   const navigate = useNavigate();
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const isAuthenticated = userDetailsObj && userDetailsObj !== null;
-    alert(isAuthenticated);
+    const handleRouteChange = () => {
+      const isAuthenticated = userDetailsObj && userDetailsObj !== null;
 
-    // Check the current location
-    const currentPath = window.location.pathname;
+      if (!isAuthenticated) {
+        navigate("/auth/login");
+      } else {
+        navigate("/");
+        setIsLoading(false);
+      }
+    };
 
-    // If the user is not authenticated and currently on the root path
-    if (!isAuthenticated) {
-      // Redirect to the login page
-      navigate("/auth/login");
-    } else if (isAuthenticated) {
-      // If the user is authenticated and currently on the login page
-      // Redirect to the root path
-      navigate("/");
-    }
-  }, [userDetailsObj, navigate]);
+    handleRouteChange();
+  }, []);
 
-  // If userDetailsObj is not available, show a loading state or a fallback component
-  if (navigation.state === "loading") {
+  if (isLoading || navigation.state === "loading") {
     return <Loader style="spinner" />;
-  } else {
-    return element;
   }
 
-  return { element };
+  return element;
 };
 
 export default ProtectedRoute;

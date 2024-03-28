@@ -10,7 +10,7 @@
 
 .menu-container {
     width: calc(60% - 1.4rem);
-    height: calc(100vh);
+    height: calc(100vh - 3.6rem);
     position: fixed;
     inset: 0;
     z-index: 26;
@@ -21,6 +21,7 @@
     background-color: var(--surface-1);
     border-radius: 0 1rem 1rem 0;
     padding: 0 0 0 1.4rem;
+    margin-top: 3.6rem;
 }
 
 .top {

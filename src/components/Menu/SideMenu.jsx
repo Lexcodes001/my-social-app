@@ -156,7 +156,7 @@ const SideMenu = ({ isOpen, setIsOpen, user }) => {
           }}
           className={`${classes["top"]}`}
         >
-          <motion.div className={`${classes["icons"]}`}>
+          {/* <motion.div className={`${classes["icons"]}`}>
             <div className={classes["logoText"]}>
               <Link>
                 <UserMenu />
@@ -189,8 +189,8 @@ const SideMenu = ({ isOpen, setIsOpen, user }) => {
                 >
                   <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
                 </svg>
-              </span>  */}
-          </motion.div>
+              </span>  
+          </motion.div> */}
 
           <motion.div className={classes["details"]}>
             <motion.div className={`${classes["names"]}`}>

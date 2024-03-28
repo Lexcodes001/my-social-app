@@ -43,6 +43,7 @@ const alertObjStateReducer = (state, action) => {
 
 export const AlertContextProvider = ({ children }) => {
   const isOnline = useOnlineStatus();
+  const [isFirst, setIsFirst] = useState(true);
 
   const [alertObjState, dispatchAlertObjState] = useReducer(
     alertObjStateReducer,
@@ -93,7 +94,8 @@ export const AlertContextProvider = ({ children }) => {
     } else if (isOnline === null) {
       dispatchAction("internet_status", "close", "", "");
     } else {
-      dispatchAction(
+      isFirst && setIsFirst(false);
+      !isFirst && dispatchAction(
         "internet_status",
         "dynamic",
         "success",
