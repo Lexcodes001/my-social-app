@@ -16,7 +16,7 @@ const ErrorPage = () => {
   let message = error.message;
 
   if (error.status === 200 || !isOnline) {
-    title = "Network Error, can't connect!";
+    title = "Can't connect!";
     message = "Try connecting to a WiFi or cellular network";
   } else if (error.status === 404) {
     title = "Page not found";
@@ -32,11 +32,23 @@ const ErrorPage = () => {
             <img src={error.status === 404 ? Err404 : Err500} alt="" />
           </div>
           <div className={classes.content}>
-            <span>Error {error.status}</span>
+            <span>{!isOnline ? 200 : error.status}</span>
             <div className={classes.msg}>
               <h1>{title}</h1>
               <p>
-                {message}. Click <Link to={currentUrl}>here</Link> to {`${error.status === 200 ? "try again" : "refresh"}`}
+                {message}.<br />
+                Click{" "}
+                <Link to={error.status === 404 ? "/" : currentUrl}>
+                  here
+                </Link>{" "}
+                to{" "}
+                {`${
+                  error.status === 404
+                    ? "go back to homepage"
+                    : error.status === 500
+                    ? "try again"
+                    : "refresh"
+                }`}
               </p>
             </div>
           </div>

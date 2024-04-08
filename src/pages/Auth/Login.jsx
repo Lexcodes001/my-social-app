@@ -297,7 +297,7 @@ const Login = () => {
             <div className={classes["login-psw"]}>
               <span className={classes["err"]}>{err.psw}</span>
               <p className={classes["reset"]}>
-                <Link to="/auth/reset">Forgot Password?</Link>
+                <Link to="/auth/login/reset">Forgot Password?</Link>
               </p>
             </div>
           </div>

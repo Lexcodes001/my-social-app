@@ -51,7 +51,6 @@
     color: var(--brand);
     font-weight: 700;
     font-size: 0.9rem;
-    font-family: "Cabin-Bold", Courier, monospace;
 }
 
 .alert-box .success {
@@ -64,7 +63,6 @@
 
 .alert-box .close {
     cursor: pointer;
-    font-family: "Cabin-Bold", Courier, monospace;
     padding: .5rem .4rem .3rem .4rem;
 }
 

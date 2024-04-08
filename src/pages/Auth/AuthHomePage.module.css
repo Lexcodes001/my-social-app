@@ -1,0 +1,7 @@
+.main{
+    display: flex;
+    grid-row: 2 / -1;
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+        align-items: start;
+}

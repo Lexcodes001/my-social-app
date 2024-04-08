@@ -1,0 +1,137 @@
+.details-box {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    justify-self: flex-end;
+}
+
+.details-box span {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: .5rem;
+}
+
+.details-box span p:first-child {
+    font-size: .6rem;
+    color: var(--text-1);
+}
+
+.details-box span p:last-child {
+    font-size: 1rem;
+    color: var(--text-2);
+    font-family: "austincity";
+    font-weight: 900;
+}
+
+.details-box .dp {
+    width: 2rem;
+    height: 2rem;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid var(--surface-1);
+    outline: 2px solid var(--text-2);
+    cursor: pointer;
+}
+
+.user {
+    position: relative;
+}
+
+.profile {
+    width: fit-content;
+    height: fit-content;
+    position: absolute;
+    top: 133%;
+    right: -4px;
+    background-color: var(--surface-2);
+    border-radius: .5rem;
+    box-shadow: 0 6px 20px var(--opaq);
+    border: 1px solid var(--text-2);
+}
+
+.profile::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    right: 8%;
+    border-width: 7px;
+    border-style: solid;
+    border-color: transparent transparent var(--text-2) transparent;
+}
+
+.profile .details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 3rem;
+    padding: 1rem .7rem;
+    border-bottom: .001px solid var(--border-line);
+}
+
+.profile .details span {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+.profile .details span img {
+    width: 2.5rem;
+    height: 2.5rem;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid var(--surface-1);
+    outline: 1px solid var(--text-2);
+}
+
+.profile .details span div {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile .details span div .firstname {
+    font-size: .9rem;
+    color: var(--text-1);
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+.profile .details span div .username {
+    font-size: .5rem;
+    color: var(--text-2);
+    font-style: italic;
+}
+
+.profile .details span svg {
+    transform: scale(.6);
+}
+
+.groups {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem .7rem;
+}
+
+.groups .empty {
+    color: var(--text-2);
+    font-style: italic;
+    font-size: .7rem;
+}
+
+.profile .logout {
+    width: auto;
+    border-top: 1px solid var(--border-line);
+    padding: 1rem .7rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-1);
+    border-radius: 0 0 .5rem .5rem;
+}
+
+.profile .logout:hover {
+    color: var(--text-2);
+    background-color: var(--soft-red);
+}

@@ -18,17 +18,18 @@ const ProtectedRoute = ({ element }) => {
       const isAuthenticated = userDetailsObj && userDetailsObj !== null;
 
       if (!isAuthenticated) {
-        navigate("/auth/login");
-      } else {
-        navigate("/");
         setIsLoading(false);
+        navigate("/auth/");
+      } else {
+        setIsLoading(false);
+        navigate("/");
       }
     };
 
     handleRouteChange();
   }, []);
 
-  if (isLoading || navigation.state === "loading") {
+  if (isLoading) {
     return <Loader style="spinner" />;
   }
 

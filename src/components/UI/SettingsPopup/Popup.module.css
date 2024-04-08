@@ -45,8 +45,8 @@
     position: fixed;
     inset: 0;
     z-index: 60;
-    backdrop-filter: blur(2px);
-    background-color: var(--border-line);
+    backdrop-filter: blur(4px);
+    background-color: var(--opaq);
 }
 
 .popup .popup-box{
@@ -58,6 +58,7 @@
     align-items: center;
     gap: 1rem;
     padding: .5rem 1.5rem;
+    border: 1px solid var(--border-line);
     border-radius: 2.5rem 2.5rem 0 0;
     background-color: var(--surface-1);
 }
@@ -74,7 +75,7 @@ main section {
 
 main section :where(h2, h3) {
     color: var(--text-1);
-    font-family: 'Bulgaria';
+    font-family: 'austincity';
 }
 
 main section .optionBox {

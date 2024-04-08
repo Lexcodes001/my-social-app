@@ -2,6 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: .7rem;
     -webkit-filter: drop-shadow(3px 9px 10px rgba(0,0,0,.5));
     filter: drop-shadow(3px 9px 10px rgba(0,0,0,.5));
 }
@@ -12,8 +13,55 @@
     filter: drop-shadow(3px 9px 20px rgba(0,0,0,.2));
 }
 
-@media only screen and (min-width: 768px) {
-    .logo img {
-        margin-left: auto;
+.logo p{
+    color: var(--brand);
+    font-size: 1.5rem;
+    font-weight: 900;
+    padding-left: .7rem;
+    font-family: "okta_neue_black";
+    border-left: 1px solid var(--border-line);
+}
+
+.fade-in-top-one {
+    display: inline-block;
+    z-index: 20;
+    animation: fade-in-top-one 0.5s ease-in-out both;
+}
+
+.fade-in-bottom-one {
+    display: none;
+    z-index: 0;
+    animation: fade-in-bottom-one 0.8s ease-in-out both;
+}
+
+@keyframes fade-in-top-one {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateY(-80px);
+        transform: translateY(-80px);
     }
+
+    100% {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in-bottom-one {
+    0% {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        -webkit-transform: translateY(-80px);
+        transform: translateY(-80px);
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    
 }

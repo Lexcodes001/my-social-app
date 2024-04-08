@@ -1,0 +1,103 @@
+.lg-screen {
+    display: none;
+}
+
+.page-links {
+    display: flex;
+    gap: .4rem;
+}
+
+.page-links a {
+    color: var(--text-2);
+    font-size: .7rem;
+    font-family: "okta_neue_black";
+    font-weight: 900;
+    position: relative;
+    padding: 2px 8px;
+    border-radius: 5px;
+}
+
+.page-links a:hover {
+    text-decoration: none;
+    background-color: var(--border-line);
+}
+
+.page-links a.active {
+    color: var(--surface-1);
+    background-color: var(--brand);
+
+}
+
+.page-links :where(a.active, a:hover) {
+
+}
+
+.page-links a::after{
+    content: '';
+    width: 0;
+    height: 4px;
+    border-radius: 1rem;
+    background-color: var(--brand);
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: width .5s ease-out;
+}
+
+.page-links a:hover::after, .page-links a.active::after {
+    width: 20px;
+}
+
+.div-link,
+.div-link span {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    border-radius: .5rem;
+}
+
+.div-link {
+    color: var(--text-2);
+    font-size: .9rem;
+    font-family: "okta_neue_black";
+    font-weight: 900;
+    width: 100%;
+    padding: .8rem .3rem .8rem .7rem;
+}
+
+.div-link:hover {
+    background-color: var(--border-line);
+    text-decoration: none;
+}
+
+
+.div-link .icon {
+    height: fit-content;
+    border-radius: 50%;
+}
+
+.div-link.active,
+.div-link.active:hover {
+    background-color: var(--brand);
+    /* border-bottom: 1px solid var(--txt-one); */
+}
+
+.div-link.active .text {
+    color: var(--surface-1);
+}
+
+.div-link.active .icon svg path {
+    fill: var(--surface-1);
+}
+
+@media only screen and (min-width: 768px) {
+    .sm-screen {
+        display: none;
+    }
+
+    .lg-screen {
+        display: flex;
+    }
+}

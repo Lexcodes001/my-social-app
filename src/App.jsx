@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import { motion, AnimatePresence } from "framer-motion";
 import Root from "./pages/Root/Root";
+import AuthHomePage from "./pages/Auth/AuthHomePage";
 import Login, { action as loginAction } from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Profile from "./pages/Profile/Profile";
@@ -60,18 +61,27 @@ const router = createBrowserRouter([
         element: <ProtectedRoute isAuth={true} element={<Auth />} />,
         children: [
           {
+            path: "",
+            element: <AuthHomePage />,
+          },
+          {
             path: "login",
-            element: <Login />,
             action: loginAction,
+            children: [
+              {
+                index: true,
+                element: <Login />,
+              },
+              {
+                path: "reset",
+                element: <Reset />,
+                action: resetAction,
+              },
+            ],
           },
           {
             path: "signup",
             element: <Register />,
-          },
-          {
-            path: "reset",
-            element: <Reset />,
-            action: resetAction,
           },
         ],
       },

@@ -1,5 +1,6 @@
 .box {
-    width: 100vw;
+    width: 100%;
+    max-width: 40rem;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -10,40 +11,50 @@
     grid-column: 1 / -1;
 }
 
+.img{
+    display: flex;
+    align-items: center;
+}
+
 .img img {
     width: 25rem;
     height: fit-content;
-    filter: grayscale(0.7);
+    filter: grayscale(1);
 }
+
 
 .content {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    gap: 1rem;
     justify-content: center;
     align-items: center;
+}
+
+.content span {
+    font-size: 3.5rem;
+    font-weight: 900;
+    font-family: "austincity", system-ui, Avenir, Helvetica, Arial, sans-serif;
+    width: fit-content;
+    text-shadow: 2px -3px var(--surface-2);
+    padding-right: 1rem;
+    border-right: 1px solid var(--border-line);
 }
 
 .msg {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem;
 }
 
-.content span {
-    font-size: 3.5rem;
-    font-weight: 900;
-    font-family: "Bulgaria", system-ui, Avenir, Helvetica, Arial, sans-serif;
-    width: fit-content;
-    text-shadow: 2px -5px var(--bg-two);
-}
 
 .msg h1 {
     color: var(--text-1);
     font-size: 1.5rem;
     font-weight: 700;
-    font-family: "Futura-Regular", system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-family: "okta_neue", system-ui, Avenir, Helvetica, Arial, sans-serif;
     width: fit-content;
     height: .9rem;
 }
@@ -51,8 +62,8 @@
 .msg p {
     width: 100%;
     color: var(--text-2);
-    font-size: .7rem;
-    font-family: "Futura-Regular", system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-size: .6rem;
+    font-family: "okta_neue", system-ui, Avenir, Helvetica, Arial, sans-serif;
     width: fit-content;
     height: .9rem;
     font-style: italic;

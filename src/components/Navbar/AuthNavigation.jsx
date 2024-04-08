@@ -1,54 +1,49 @@
-import classes from "./Navigation.module.css";
+import genclasses from "./Navigation.module.css";
+import classes from './AuthNavigation.module.css';
 import LogoImage from "../../components/UI/Logo/Logo";
-import { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useContext, useEffect, useRef, useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { NavHashLink } from "react-router-hash-link";
 import { ThemeContext } from "../../context/ThemeContext";
+import NavigationWrapper from "./NavigationWrapper";
+import SideMenu from "../Menu/SideMenu";
+import Hamburger from "hamburger-react";
+import { AnimatePresence } from "framer-motion";
 
 const AuthNavigation = () => {
+  const [isOpen, setIsOpen] = useState();
   const [pageName, setPageName] = useState("");
   const { theme } = useContext(ThemeContext);
   const location = useLocation();
-  const [hasHistory, setHasHistory] = useState(false);
 
-  useEffect(() => {
-    const handleHistoryChange = () => {
-      let history = window.history;
-      console.log(history);
-      console.log(window.history.length);
+  //  const [activeLink, setActiveLink] = useState(null);
+  //  const divRefs = useRef([]);
 
-      const isSiteVisitedBefore = () => {
-        const currentPath = location.pathname;
+  //  useEffect(() => {
+  //    const observer = new IntersectionObserver(
+  //      (entries) => {
+  //        entries.forEach((entry) => {
+  //          if (entry.isIntersecting) {
+  //            const linkId = entry.target.getAttribute("id");
+  //            setActiveLink(linkId);
+  //          }
+  //        });
+  //      },
+  //      { rootMargin: "-20% 0% -80% 0%" }
+  //    );
 
-        // Check if there's any history entry
-        if (history.length > 0) {
-          // Loop through the history entries
-          for (let i = history.length - 1; i >= 0; i--) {
-            const historyPath = history.entries[i].pathname;
+  //    divRefs.current.forEach((div) => observer.observe(div));
 
-            // If the current path is found in the history, it means it has been visited before
-            if (historyPath === currentPath) {
-              return true;
-            }
-          }
-        }
+  //    return () => {
+  //      divRefs.current.forEach((div) => observer.unobserve(div));
+  //    };
+  //  }, []);
 
-        // If the loop completes without finding the current path in the history,
-        // it means this is the first route visited
-        return false;
-      };
-
-      // const isFirstSiteVisited = !isSiteVisitedBefore();
-
-    };
-
-    handleHistoryChange();
-
-    window.addEventListener("popstate", handleHistoryChange);
-
-    return () => {
-      window.removeEventListener("popstate", handleHistoryChange);
-    };
-  }, []);
+  //  const handleDivRef = (ref) => {
+  //    if (ref) {
+  //      divRefs.current.push(ref);
+  //    }
+  //  };
 
   useEffect(() => {
     const generatePageName = (str) => {
@@ -71,45 +66,112 @@ const AuthNavigation = () => {
     setPageName(generatePageName(pathname));
   }, [location]);
 
+  const Links = [
+    {
+      id: 'feature',
+      url: "/auth/#feature",
+      name: "Features",
+      icon: "",
+    },
+    {
+      id: 'discover',
+      url: "/auth/#discover",
+      name: "Discover",
+      icon: "",
+    },
+    {
+      id: 'stories',
+      url: "/auth/#stories",
+      name: "Stories",
+      icon: "",
+    },
+    {
+      id: 'community',
+      url: "/auth/#community",
+      name: "Top Community",
+      icon: "",
+    },
+    {
+      id: 'blog',
+      url: "/auth/#blog",
+      name: "What's Update",
+      icon: "",
+    },
+  ];
+
   return (
     <>
-      <div className={`${classes["navbar"]}`}>
-        <div className={`${classes["top"]} ${classes["auth"]}`}>
-          {/* <span className={classes["pageName"]}>
-            {hasHistory ? (
-              <button
-                className={classes["navigate"]}
-                onClick={() => navigate(-1)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="24"
-                  viewBox="0 -960 960 960"
-                  width="24"
-                >
-                  <path
-                    fill={
-                      theme === "light" || theme === "grape"
-                        ? "var(--text-2)"
-                        : "var(--text-2)"
-                    }
-                    d="m142-480 294 294q15 15 14.5 35T435-116q-15 15-35 15t-35-15L57-423q-12-12-18-27t-6-30q0-15 6-30t18-27l308-308q15-15 35.5-14.5T436-844q15 15 15 35t-15 35L142-480Z"
-                  />
-                </svg>
-              </button>
-            ) : (
-              <span className={`${classes["mobile"]} ${classes.logoItem}`}>
-                <LogoImage />
-              </span>
-            )}
-            <p>{pageName}</p>
-          </span> */}
-          <span className={classes["logo"]}>
-            <span className={`${classes[""]} ${classes.logoImage}`}><LogoImage /></span>
-            <p className={`${classes[""]} ${classes.logoText}`}>Trendbook</p>
-          </span>
+      <NavigationWrapper>
+        <div className={`${genclasses["left"]}`}>
+          <LogoImage name />
         </div>
-      </div>
+        <div className={`${genclasses["center"]}`}>
+          <div className={`${classes["sm-screen"]}`}></div>
+          <div className={`${classes["lg-screen"]}`}>
+            {Links.map((link) => (
+              <NavHashLink
+              key={link.id}
+                to={link.url}
+                activeClassName={[classes["link"], classes.active].join(" ")}
+                activeStyle={{ color: "red" }}
+                className={classes["link"]}
+                smooth
+              >
+                <span className={`${classes["icon"]}`}>{link.icon}</span>
+                <span className={`${classes["text"]}`}>
+                  {link.id.toLocaleUpperCase()}
+                </span>
+              </NavHashLink>
+            ))}
+          </div>
+        </div>
+        <div className={`${genclasses["right"]}`}>
+          <div className={classes["page-links"]}>
+            <NavLink
+              to="/auth/login/"
+              className={({ isActive }) => isActive ? classes["active"] : ''}
+            >
+              Sign In
+            </NavLink>
+            <NavLink
+              to="/auth/signup"
+              className={({ isActive }) => isActive ? classes["active"] : ''}
+            >
+              Register
+            </NavLink>
+          </div>
+          <Hamburger
+            size={15}
+            distance="sm"
+            rounded
+            hideOutline={false}
+            toggled={isOpen}
+            color={isOpen ? "var(--brand)" : "var(--text-1)"}
+            toggle={() => setIsOpen((isOpen) => !isOpen)}
+          />
+        </div>
+      </NavigationWrapper>
+      <AnimatePresence>
+        {(isOpen || window.innerWidth > 767) && (
+          <SideMenu isOpen={isOpen} setIsOpen={setIsOpen}>
+            {Links.map((link) => (
+              <NavHashLink
+              key={link.id}
+                to={link.url}
+                activeClassName={[classes["div-link"], classes.active].join(" ")}
+                activeStyle={{ color: "red" }}
+                className={classes["div-link"]}
+                smooth
+              >
+                <span className={`${classes["icon"]}`}>{link.icon}</span>
+                <span className={`${classes["text"]}`}>
+                  {link.id.toLocaleUpperCase()}
+                </span>
+              </NavHashLink>
+            ))}
+          </SideMenu>
+        )}
+      </AnimatePresence>
     </>
   );
 };
