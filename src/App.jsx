@@ -66,11 +66,11 @@ const router = createBrowserRouter([
           },
           {
             path: "login",
-            action: loginAction,
             children: [
               {
                 index: true,
                 element: <Login />,
+                action: loginAction,
               },
               {
                 path: "reset",

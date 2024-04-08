@@ -13,14 +13,14 @@
 }
 
 .details-box span p:first-child {
-    font-size: .6rem;
+    font-size: .5rem;
     color: var(--text-1);
 }
 
 .details-box span p:last-child {
     font-size: 1rem;
-    color: var(--text-2);
-    font-family: "austincity";
+    color: var(--brand);
+    font-family: "okta_neue_black";
     font-weight: 900;
 }
 
