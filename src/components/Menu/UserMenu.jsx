@@ -121,7 +121,7 @@ const UserMenu = ({user}) => {
       {currentUser && (
         <div className={classes["details-box"]}>
           <span>
-            <p className={classes[""]}>Welcome back,</p>
+            <p className={classes[""]}>Hi,</p>
             <p className={classes[""]}>
               {currentUserDetails.firstName.toUpperCase()}
             </p>

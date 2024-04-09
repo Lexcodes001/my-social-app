@@ -19,6 +19,7 @@
 
 .details-box span p:last-child {
     font-size: 1rem;
+    letter-spacing: 0px;
     color: var(--brand);
     font-family: "okta_neue_black";
     font-weight: 900;

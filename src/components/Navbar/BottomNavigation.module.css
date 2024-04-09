@@ -4,7 +4,7 @@
     padding: 1.5rem 1rem;
     display: grid;
     place-content: center;
-    gap: 2rem;
+    justify-content: space-between;
     grid-template-columns: auto auto 5rem auto auto;
     position: fixed;
     bottom: 0;
@@ -24,12 +24,9 @@
     transition: transform 200ms ease;
 }
 
-.link:hover {
-    transform: scale(1.125);
-}
-
-.link svg {
-    
+svg {
+    outline: none;
+    border: none;
 }
 
 .link .squircle {
