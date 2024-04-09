@@ -4,8 +4,8 @@
     padding: 1.5rem 1rem;
     display: grid;
     place-content: center;
-    justify-content: space-between;
-    grid-template-columns: auto auto 5rem auto auto;
+    justify-content: space-evenly;
+    grid-template-columns: auto auto auto auto auto;
     position: fixed;
     bottom: 0;
     z-index: 20;
@@ -16,8 +16,8 @@
 
 .link {
     position: relative;
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
     display: grid;
     place-items: center;
     cursor: pointer;
@@ -47,8 +47,8 @@ a.active:hover {
 }
 
 .nav button{
-    width: 4rem;
-    height: 4rem;
+    width: 3.5rem;
+    height: 3.5rem;
     display: grid;
     justify-self: center;
     place-items: center;
