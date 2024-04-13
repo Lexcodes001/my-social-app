@@ -189,9 +189,11 @@ const BottomNavigation = ({ user }) => {
             end={link.end}
             onClick={() => setActiveLink(link.text)}
           >
-            <span>{active === link.text ? link.icon[1] : link.icon[0]}</span>
+            <span className={classes["link-icon"]}>
+              {active === link.text ? link.icon[1] : link.icon[0]}
+            </span>
 
-            <p>{link.text}</p>
+            <span className={classes["link-text"]}>{link.text}</span>
             {/* <span className={`${classes["text"]}`}>{link.text}</span> */}
           </NavLink>
         ))}
@@ -199,7 +201,7 @@ const BottomNavigation = ({ user }) => {
       <button className={classes["add-btn"]}>
         <span>
           <motion.svg
-          className={classes['add-icon']}
+            className={classes["add-icon"]}
             whileTap={{ scale: 1.2 }}
             xmlns="http://www.w3.org/2000/svg"
             height="24"
