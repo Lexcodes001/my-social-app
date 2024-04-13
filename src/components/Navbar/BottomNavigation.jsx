@@ -131,7 +131,7 @@ const BottomNavigation = ({ user }) => {
         </motion.svg>,
       ],
       url: "notifications",
-      text: "Notifications",
+      text: "Notices",
       end: false,
     },
     {
@@ -162,7 +162,7 @@ const BottomNavigation = ({ user }) => {
         </motion.svg>,
       ],
       url: `profile/${currentUserDetails.username}`,
-      text: "My Profile",
+      text: "Profile",
       end: false,
     },
   ];
