@@ -8,18 +8,16 @@
 }
 
 .logo img {
-    height: 2rem;
+    height: 1.5rem;
     -webkit-filter: drop-shadow(3px 9px 20px rgba(0,0,0,.2));
     filter: drop-shadow(3px 9px 20px rgba(0,0,0,.2));
 }
 
 .logo p{
     color: var(--brand);
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 900;
-    padding-left: .7rem;
     font-family: "okta_neue_black";
-    border-left: 1px solid var(--border-line);
 }
 
 .fade-in-top-one {

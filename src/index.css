@@ -365,7 +365,7 @@ body {
   height: 100%;
   display: grid;
   grid-template-columns: auto;
-  grid-template-rows: 3.5rem auto;
+  grid-template-rows: 4.5rem auto;
   grid-gap: 0;
   align-items: center;
   justify-items: center;

@@ -77,7 +77,17 @@ const Popup = () => {
           }`}
           //   onClick={() => setIsOpen(true)}
         >
-          <motion.span className={classes["smRect"]}></motion.span>
+          <motion.span className={classes["smRect"]}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              version="1.1"
+              x="0px"
+              y="0px"
+              viewBox="0 0 512 640"
+            >
+              <path fill="var(--surface-1)" d="M335.052,171.058c-21.116-21.115-49.19-32.744-79.052-32.744c-29.862,0-57.937,11.63-79.052,32.745L72.003,276.004  c-11.18,11.181-17.337,26.045-17.337,41.855c0,15.812,6.157,30.676,17.337,41.854c23.079,23.081,60.632,23.081,83.712,0.002  L256,259.431l100.285,100.284c11.18,11.18,26.045,17.337,41.856,17.337c15.811-0.001,30.676-6.158,41.855-17.338  c11.18-11.18,17.337-26.045,17.337-41.856c0-15.812-6.158-30.676-17.337-41.855L335.052,171.058z" />
+            </svg>
+          </motion.span>
           <motion.main className={classes["popup-box"]}>
             <section className={classes["theme"]}>
               <h2>Select Theme:</h2>

@@ -1,34 +1,45 @@
 .popup{
-    width: auto;
+    width: 100%;
     height: 100%;
     display: flex;
-    gap: .6rem;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;    
     position: fixed;
     bottom: 0;
-    z-index: 60;
     transition: bottom 1s ease;
 }
 
 .open{
+    z-index: 60;
     bottom: 0;
 }
 
 .close{
-    bottom: -38.4rem;
+    z-index: 2;
+    gap: 4.5rem;
+    bottom: -33rem;
 }
 
 .popup span.smRect {
-    width: 2.8rem;
-    height: 6px;
+    width: 2.5rem;
+    height: 2.5rem;
     display: flex;
         /* left: 50%;
         margin-left: -1.5rem; */
-    border-radius: 2rem;
+    border-radius: 2rem 2rem 0 0;
     background-color: var(--border-line);
     border: 1px solid var(--border-line);
+    cursor: grab;
+}
+
+.popup.close span.smRect svg{
+    animation: breath-up 2s ease-out infinite forwards;
+}
+
+.popup.open span.smRect svg{
+    transform: rotateX(180deg);
+    animation: breath-down 2s ease-out infinite forwards;
 }
 
 /* .close {
@@ -109,11 +120,20 @@ main section .optionBox {
     border-top: 1px solid var(--border-line);
 }
 
-@keyframes breath {
+@keyframes breath-up {
     from{
-        transform: translateY(1px);
+        transform: translateY(3px);
     }
     to{
-        transform: translateY(-5px);
+        transform: translateY(-4px);
+    }
+}
+
+@keyframes breath-down {
+    from{
+        transform: rotateX(180deg) translateY(5px);
+    }
+    to{
+        transform: rotateX(180deg) translateY(-4px);
     }
 }

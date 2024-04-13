@@ -4,9 +4,9 @@ import { LogoutContext } from "../../pages/Root/Root";
 import classes from "./UserMenu.module.css";
 import { useRouteLoaderData } from "react-router-dom";
 
-const UserMenu = ({user}) => {
+const UserMenu = ({ user }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  console.log('user', user);
+  console.log("user", user);
   const currentUser = user.user;
   const currentUserDetails = user.result[1];
   const logout = useContext(LogoutContext);
@@ -28,8 +28,7 @@ const UserMenu = ({user}) => {
     return () => {
       document.removeEventListener("click", handleOutsideClick);
     };
-  }, [])
-  
+  }, []);
 
   return (
     <div className={classes["user"]}>
@@ -113,6 +112,18 @@ const UserMenu = ({user}) => {
               className={`${classes["item"]} ${classes.logout}`}
               onClick={logout}
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 25"
+                width='24px'
+                height='24'
+              >
+                <path
+                  fill="var(--text-2)"
+                  class="cls-1"
+                  d="m18.75,18v1c0,.96-.79,1.75-1.75,1.75h-3.92c.11-.33.17-.67.17-1.03v-.47h3.75c.14,0,.25-.11.25-.25v-1c0-.41.34-.75.75-.75s.75.34.75.75Zm-5.5-13.25h3.75c.14,0,.25.11.25.25v1c0,.41.34.75.75.75s.75-.34.75-.75v-1c0-.96-.79-1.75-1.75-1.75h-3.92c.11.33.17.67.17,1.03v.47Zm8.28,6.72l-3-3c-.29-.29-.77-.29-1.06,0-.29.29-.29.77,0,1.06l1.72,1.72h-5.19c-.41,0-.75.34-.75.75s.34.75.75.75h5.19l-1.72,1.72c-.29.29-.29.77,0,1.06.15.15.34.22.53.22s.38-.07.53-.22l3-3c.29-.29.29-.77,0-1.06ZM11.078,2.902c-.428-.334-.972-.451-1.502-.319l-6,1.5c-.78.195-1.325.894-1.325,1.698v12.438c0,.805.545,1.503,1.325,1.698l6.001,1.5c.142.035.285.053.427.053.386,0,.762-.128,1.074-.372.427-.334.672-.836.672-1.379V4.281c0-.543-.245-1.045-.672-1.379Z"
+                />
+              </svg>
               Log out
             </span>
           </motion.div>
@@ -120,12 +131,7 @@ const UserMenu = ({user}) => {
       </AnimatePresence>
       {currentUser && (
         <div className={classes["details-box"]}>
-          <span>
-            <p className={classes[""]}>Hi,</p>
-            <p className={classes[""]}>
-              {currentUserDetails.firstName.toUpperCase()}
-            </p>
-          </span>
+          <span></span>
           <img
             onClick={() => {
               setIsModalOpen((prev) => !prev);

@@ -16,6 +16,7 @@ import Home, { loader as userDetailsLoader } from "./components/Home/Home";
 import ProtectedRoute from "./components/Actions/ProtectedRoute";
 import Auth from "./pages/Auth/Auth";
 import Reset, { action as resetAction } from "./pages/Auth/Reset";
+import Search from "./pages/Search/search";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
           {
             path: "notifications",
             element: <Notifications />,
+          },
+          {
+            path: "search",
+            element: <Search />,
           },
           {
             path: "dashboard",

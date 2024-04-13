@@ -125,7 +125,9 @@
     border-top: 1px solid var(--border-line);
     padding: 1rem .7rem;
     cursor: pointer;
+    font-size: .8rem;
     display: flex;
+    gap: .3rem;
     justify-content: center;
     align-items: center;
     color: var(--text-1);
