@@ -143,6 +143,8 @@ section.features main .feature .texts p {
 }
 
 section.discover .slideshow {
+  width: 100%;
+  height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -153,7 +155,8 @@ section.discover .slideshow {
 section.discover .slideshow .slide {
     display: none;
     grid-template-rows: 50% 50%;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 60% 40%;
+    gap: .5rem;
     justify-content: center;
     align-items: center;
 }
@@ -167,9 +170,8 @@ section.discover .slideshow .slide.active {
 
 section.discover .slideshow .slide .main-img {
     width: 100%;
-    height: 100%;
-    justify-self: center;
-    align-self: center;
+    justify-self: flex-end;
+    align-self: flex-end;
     grid-row: 1 / 2;
     grid-column: 1 / -1;
 }
@@ -178,12 +180,16 @@ section.discover .slideshow .slide .flat-img {
     width: 100%;
     grid-row: 2 / -1;
     grid-column: 1 / 2;
+justify-self: flex-start;
+    align-self: flex-start;
 }
 
 section.discover .slideshow .slide article {
     width: 100%;
     grid-row: 2 / -1;
     grid-column: 2 / -1;
+justify-self: flex-start;
+    align-self: flex-start;
 }
 
 section.discover .slideshow .slide article h3 {
@@ -204,13 +210,32 @@ section.discover .slideshow :is(.prev, .next) {
 }
 
 section.discover .slideshow .prev {
-    left: -1rem;
+    left: -2rem; 
 }
 
 section.discover .slideshow .next {
-    right: -1rem;
+    right: -2rem;
 }
 
 section.discover .slideshow .next svg {
     transform: rotateY(180deg);
+}
+
+section.discover .navigation{
+ display: flex;
+  gap: .3rem;
+}
+
+section.discover .navigation button{
+  width: .6rem;
+  height: .6rem;
+  border-radius: .5rem;
+  border: 1px solid var(--text-2);
+  transition: width .5s ease;
+  background: transparent;
+}
+
+section.discover .navigation button.active{
+  width: 1.2rem;
+  background-color: var(--text-1);
 }

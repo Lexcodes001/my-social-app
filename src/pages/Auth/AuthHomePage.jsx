@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import classes from "./AuthHomepage.module.css";
+import classes from "./AuthHomePage.module.css";
 import { Link } from "react-router-dom";
 import { NavHashLink, HashLink } from "react-router-hash-link";
 import Hero from "../../assets/images/hero.svg";
@@ -55,7 +55,7 @@ const AuthHomePage = () => {
     {
       id: 0,
       header: "Stand Out, Shine Bright",
-      desc: "Create captivating, compelling and distinctive content with powerful tools for visuals, videos, and immersive stories that's distinctly yours",
+      desc: "Create captivating, compelling and distinctive content that's distinctly yours",
       main_img: Main_content,
       flat_img: Flat_content,
     },
@@ -64,7 +64,7 @@ const AuthHomePage = () => {
       header: "Uncover Your Tribe",
       desc: "Explore diverse communities, uncover new passions, and connect with like-minded individuals",
       main_img: Main_tribe,
-      flat_img: Flat_tribe,
+      flat_img: Flat_tribe, 
     },
     {
       id: 2,

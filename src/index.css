@@ -172,9 +172,7 @@ html {
 }
 
 :root {
-  line-height: 1.5;
   font-weight: 400;
-
   --soft-red: rgb(209, 29, 35);
   --green: rgb(18, 163, 5);
   --gradient-1: repeating-linear-gradient(135deg, var(--surface-1) 0px, var(--surface-1) 10px, transparent 10px, transparent 11px),

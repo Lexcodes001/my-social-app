@@ -16,7 +16,7 @@ import Home, { loader as userDetailsLoader } from "./components/Home/Home";
 import ProtectedRoute from "./components/Actions/ProtectedRoute";
 import Auth from "./pages/Auth/Auth";
 import Reset, { action as resetAction } from "./pages/Auth/Reset";
-import Search from "./pages/Search/search";
+import Search from "./pages/Search/Search";
 
 const router = createBrowserRouter([
   {
