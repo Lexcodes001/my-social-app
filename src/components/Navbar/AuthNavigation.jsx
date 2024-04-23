@@ -1,9 +1,9 @@
 import genclasses from "./Navigation.module.css";
-import classes from './AuthNavigation.module.css';
+import classes from "./AuthNavigation.module.css";
 import LogoImage from "../../components/UI/Logo/Logo";
 import { useContext, useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { NavHashLink } from "react-router-hash-link";
+import { HashLink, NavHashLink } from "react-router-hash-link";
 import { ThemeContext } from "../../context/ThemeContext";
 import NavigationWrapper from "./NavigationWrapper";
 import SideMenu from "../Menu/SideMenu";
@@ -25,6 +25,7 @@ const AuthNavigation = () => {
   //        entries.forEach((entry) => {
   //          if (entry.isIntersecting) {
   //            const linkId = entry.target.getAttribute("id");
+  //            alert(linkId);
   //            setActiveLink(linkId);
   //          }
   //        });
@@ -46,54 +47,54 @@ const AuthNavigation = () => {
   //  };
 
   useEffect(() => {
-    const generatePageName = (str) => {
-      switch (str) {
-        case "/auth/login":
-          return "Sign In";
-          break;
-        case "/auth/signup":
-          return "Sign Up";
-          break;
-        case "/auth/reset":
-          return "Reset";
-          break;
+    // const generatePageName = (str) => {
+    //   switch (str) {
+    //     case "/auth#feature":
+    //       return "Sign In";
+    //       break;
+    //     case "/auth":
+    //       return "Sign Up";
+    //       break;
+    //     case "/auth/reset":
+    //       return "Reset";
+    //       break;
 
-        default:
-          break;
-      }
-    };
+    //     default:
+    //       break;
+    //   }
+    // };
     let pathname = location.pathname;
-    setPageName(generatePageName(pathname));
+    setPageName(pathname);
   }, [location]);
 
   const Links = [
     {
-      id: 'feature',
-      url: "/auth/#feature",
+      id: "Feature",
+      url: "/auth#features",
       name: "Features",
       icon: "",
     },
     {
-      id: 'discover',
-      url: "/auth/#discover",
+      id: "Discover",
+      url: "/auth#discover",
       name: "Discover",
       icon: "",
     },
     {
-      id: 'stories',
-      url: "/auth/#stories",
+      id: "Stories",
+      url: "/auth#stories",
       name: "Stories",
       icon: "",
     },
     {
-      id: 'community',
-      url: "/auth/#community",
+      id: "Community",
+      url: "/auth#community",
       name: "Top Community",
       icon: "",
     },
     {
-      id: 'blog',
-      url: "/auth/#blog",
+      id: "Blog",
+      url: "/auth#blog",
       name: "What's Update",
       icon: "",
     },
@@ -108,20 +109,20 @@ const AuthNavigation = () => {
         <div className={`${genclasses["center"]}`}>
           <div className={`${classes["sm-screen"]}`}></div>
           <div className={`${classes["lg-screen"]}`}>
+            
             {Links.map((link) => (
-              <NavHashLink
-              key={link.id}
-                to={link.url}
-                activeClassName={[classes["link"], classes.active].join(" ")}
-                activeStyle={{ color: "red" }}
-                className={classes["link"]}
+              <HashLink
+                key={link.id}
                 smooth
+                to={link.url}
+                onClick={()=>{
+                  setPageName(link.url)
+                }}
+                className={`${classes["link"]} ${pageName === link.url && classes.active}`}
               >
                 <span className={`${classes["icon"]}`}>{link.icon}</span>
-                <span className={`${classes["text"]}`}>
-                  {link.id.toLocaleUpperCase()}
-                </span>
-              </NavHashLink>
+                <span className={`${classes["text"]}`}>{link.id}</span>
+              </HashLink>
             ))}
           </div>
         </div>
@@ -129,36 +130,40 @@ const AuthNavigation = () => {
           <div className={classes["page-links"]}>
             <NavLink
               to="/auth/login/"
-              className={({ isActive }) => isActive ? classes["active"] : ''}
+              className={({ isActive }) => (isActive ? classes["active"] : "")}
             >
               Sign In
             </NavLink>
             <NavLink
               to="/auth/signup"
-              className={({ isActive }) => isActive ? classes["active"] : ''}
+              className={({ isActive }) => (isActive ? classes["active"] : "")}
             >
               Register
             </NavLink>
           </div>
-          <Hamburger
-            size={15}
-            distance="sm"
-            rounded
-            hideOutline={false}
-            toggled={isOpen}
-            color={isOpen ? "var(--brand)" : "var(--text-1)"}
-            toggle={() => setIsOpen((isOpen) => !isOpen)}
-          />
+          <div className={classes["sm-screen"]}>
+            <Hamburger
+              size={15}
+              distance="sm"
+              rounded
+              hideOutline={false}
+              toggled={isOpen}
+              color={isOpen ? "var(--brand)" : "var(--text-1)"}
+              toggle={() => setIsOpen((isOpen) => !isOpen)}
+            />
+          </div>
         </div>
       </NavigationWrapper>
       <AnimatePresence>
         {(isOpen || window.innerWidth > 767) && (
           <SideMenu isOpen={isOpen} setIsOpen={setIsOpen}>
             {Links.map((link) => (
-              <NavHashLink
-              key={link.id}
+              <HashLink
+                key={link.id}
                 to={link.url}
-                activeClassName={[classes["div-link"], classes.active].join(" ")}
+                activeClassName={[classes["div-link"], classes.active].join(
+                  " "
+                )}
                 activeStyle={{ color: "red" }}
                 className={classes["div-link"]}
                 smooth
@@ -167,7 +172,7 @@ const AuthNavigation = () => {
                 <span className={`${classes["text"]}`}>
                   {link.id.toLocaleUpperCase()}
                 </span>
-              </NavHashLink>
+              </HashLink>
             ))}
           </SideMenu>
         )}

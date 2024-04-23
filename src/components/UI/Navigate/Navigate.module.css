@@ -1,9 +1,10 @@
 .navigate {
+    display: flex;
+    align-items: center;
     background: none;
-    border-radius: 50%;
-    padding: .6rem .5rem .3rem .8rem;
 }
 
-.navigate:hover {
-    background-color: var(--border-line);
+.navigate p{
+    color: var(--text-2);
+    font-size: .6rem;
 }

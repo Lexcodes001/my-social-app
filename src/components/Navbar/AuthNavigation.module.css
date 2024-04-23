@@ -49,6 +49,49 @@
     width: 20px;
 }
 
+.link,
+.link span {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    border-radius: .3rem;
+}
+
+.link {
+    color: var(--text-2);
+    font-size: .6rem;
+    font-family: "okta_neue_black";
+    font-weight: 900;
+    padding: .3rem .8rem;
+}
+
+.link:hover {
+    background-color: var(--border-line);
+    text-decoration: none;
+}
+
+.link .icon {
+    display: none;
+    height: fit-content;
+    border-radius: 50%;
+}
+
+.link.active,
+.link.active:hover {
+    background-color: var(--brand);
+    /* border-bottom: 1px solid var(--txt-one); */
+}
+
+.link.active .text {
+    color: var(--surface-1);
+}
+
+.link.active .icon svg path {
+    fill: var(--surface-1);
+}
+
+
 .div-link,
 .div-link span {
     display: flex;
@@ -71,7 +114,6 @@
     background-color: var(--border-line);
     text-decoration: none;
 }
-
 
 .div-link .icon {
     height: fit-content;

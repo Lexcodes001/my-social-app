@@ -4,6 +4,11 @@
 }
 
 @font-face {
+  font-family: "okta_neue_medium";
+  src: url("./assets/fonts/okta-neue/Medium.otf") format("opentype");
+}
+
+@font-face {
   font-family: "okta_neue_black";
   src: url("./assets/fonts/okta-neue/Black.otf") format("opentype");
 }
@@ -172,6 +177,9 @@ html {
 
   --soft-red: rgb(209, 29, 35);
   --green: rgb(18, 163, 5);
+  --gradient-1: repeating-linear-gradient(135deg, var(--surface-1) 0px, var(--surface-1) 10px, transparent 10px, transparent 11px),
+    repeating-linear-gradient(22.5deg, var(--surface-1) 0px, var(--surface-1) 10px, transparent 10px, transparent 11px),
+    linear-gradient(90deg, hsl(194, 74%, 56%), hsl(266, 74%, 56%), hsl(338, 74%, 56%), hsl(50, 74%, 56%), hsl(122, 74%, 56%));
   --shadow: 0 2.8px 2.2px hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 3%)),
     0 6.7px 5.3px hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 1%)),
     0 12.5px 10px hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 2%)),
@@ -335,23 +343,33 @@ html {
   transition-property: color, background-color;
   transition-duration: .5s;
   transition-timing-function: ease;
+  scroll-behavior: smooth;
 }
 
-p{
+p {
   font-family: "okta_neue", system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
-* ::-webkit-scrollbar,
+* ::-webkit-scrollbar{
+    width: 3px;
+    height: 3px;
+    background: var(--text-1);
+  }
+
 * ::-webkit-scrollbar-corner {
-  width: 0.001px;
-  height: 0.001px;
-  background: var(--surface-1);
+  width: 0.0001px;
+  height: 0.0001px;
+  background: var(--brand);
 }
 
-* ::-webkit-scrollbar-thumb,
-* ::-webkit-scrollbar-track {
-  background: var(--surface-4);
+* ::-webkit-scrollbar-thumb {
+  width: 3px;
+  background: var(--opaq);
+}
 
+* ::-webkit-scrollbar-track {
+  width: 3px;
+  background: var(--text-1);
 }
 
 body {
@@ -399,9 +417,8 @@ button {
 @media only screen and (min-width: 768px) {
   #root {
     display: grid;
-    grid-template-columns: 6rem auto;
-    grid-template-rows: 2.5rem auto;
-    grid-gap: 1rem 0;
+    grid-template-columns: 20% 60% 20%;
+    grid-template-rows: 4.5rem auto;
     align-items: start;
     justify-items: center;
   }
@@ -411,8 +428,7 @@ button {
   #root {
     align-items: start;
     justify-content: center;
-    grid-template-rows: 3.5rem auto;
-    grid-template-columns: auto auto auto;
-    grid-gap: 0 0;
+    grid-template-rows: 4.5rem auto;
+    grid-template-columns: 25% 50% 25%;
   }
 }

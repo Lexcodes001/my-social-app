@@ -190,10 +190,10 @@ const Login = () => {
   return (
     <div className={classes["authWrapper"]}>
       <div className={classes["formWrapper"]}>
-        <span className={classes["title"]}>
+        <div className={classes["title"]}>
           <Navigate action="backward" />
           <h1>Sign In</h1>
-        </span>
+        </div>
         <Form method="post" className={classes["form"]}>
           <div className={classes["input-box"]}>
             <label htmlFor="email">Email Address</label>

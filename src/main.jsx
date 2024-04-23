@@ -13,7 +13,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ThemeContextProvider>
       <AlertContextProvider>
-        <Popup />
         <App />
         <AlertBoxPortal />
       </AlertContextProvider>

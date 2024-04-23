@@ -10,7 +10,7 @@
 
 .menu-container {
     width: calc(60% - 1.4rem);
-    height: calc(100vh - 3.6rem);
+    height: calc(100vh - 4.5rem);
     position: fixed;
     inset: 0;
     z-index: 26;
@@ -22,7 +22,7 @@
     border-right: 1px solid var(--border-line);
     border-radius: 0;
     padding: 0 0 0 1.4rem;
-    margin-top: 3.6rem;
+    margin-top: 4.5rem;
 }
 
 /* .top {
@@ -145,6 +145,7 @@
     }
 
     .menu-container {
+        display: none;
         position: sticky;
         top: 3.5rem;
         gap: 0;
@@ -156,8 +157,8 @@
         background-color: var(--bg-one);
         border-radius: .5rem;
         padding: 0;
-        grid-row: 2 / -1;
-            grid-column: 1 / 2;
+        /* grid-row: 2 / -1;
+            grid-column: 1 / 2; */
             justify-content: flex-start;
             align-items: center;
             background-color: var(--surface-2);
