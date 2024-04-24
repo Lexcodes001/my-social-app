@@ -202,20 +202,20 @@ form .form-section {
   font-size: 1.7rem;
   font-family: "okta_neue_black";
   width: fit-content;
-  height: .9rem;
-  text-shadow: 3px -2px 0px var(--surface-1);
-  padding-left: .2rem;
+  height: 1rem;
+  /* text-shadow: 3px -2px 0px var(--surface-1);
+  padding-left: .2rem; */
 }
 
 .form-section header h2::after {
   position: absolute;
   z-index: -1;
   content: '';
-  top: .3rem;
-  left: 0%;
+  top: 220%;
+  right: 0%;
   width: 75%;
   border-radius: .3rem 0 0 0;
-  height: 1.2rem;
+  height: .4rem;
   background-color: var(--brand);
 }
 
