@@ -199,7 +199,7 @@ const AuthHomePage = () => {
     const reorderedStories = [
       ...remainingStoryIndexes.slice(0, 3),
       stories[activeStoryIndex],
-      ...remainingStoryIndexes.slice(3)
+      ...remainingStoryIndexes.slice(3),
     ];
     setNewStories(reorderedStories);
   }, [activeId]);
@@ -324,18 +324,20 @@ const AuthHomePage = () => {
                   }
                 }}
               >
-                <motion.img
-                  className={classes["main-img"]}
-                  src={item.main_img}
-                  alt="main-img"
-                />
+                <div className={classes["cover-img"]}>
+                  <div
+                    className={classes["img"]}
+                    style={{ backgroundImage: `url(${item.main_img})` }}
+                  >
+                    <h3>{item.header}</h3>
+                  </div>
+                </div>
                 <motion.img
                   className={classes["flat-img"]}
                   src={item.flat_img}
                   alt="flat-img"
                 />
                 <motion.article>
-                  <h3>{item.header}</h3>
                   <p>{item.desc}</p>
                 </motion.article>
               </motion.div>
@@ -402,29 +404,31 @@ const AuthHomePage = () => {
         id="stories"
       >
         <h1>Stories</h1>
-        <div className={classes["avatars"]}>
-          {newStories.map((elem) => (
-            <img
-              onClick={() => {
-                setActiveId(elem.id);
-              }}
-              className={`${activeId === elem.id && classes["active"]}`}
-              src={elem.avatar}
-              alt={`user${elem.id}avatar`}
-            />
-          ))}
-        </div>
+        <div className={classes["user-stories"]}>
+          <div className={classes["avatars"]}>
+            {newStories.map((elem) => (
+              <img
+                onClick={() => {
+                  setActiveId(elem.id);
+                }}
+                className={`${activeId === elem.id && classes["active"]}`}
+                src={elem.avatar}
+                alt={`user${elem.id}avatar`}
+              />
+            ))}
+          </div>
 
-        <article>
-          <span className={classes["names"]}>
-            <p>{stories[activeId].name}</p>
-            <p>•</p>
-            <p>@{stories[activeId].username}</p>
-          </span>
-          <span className={classes["testimony"]}>
-            {stories[activeId].testimony}
-          </span>
-        </article>
+          <article>
+            <span className={classes["names"]}>
+              <p>{stories[activeId].name}</p>
+              <p>•</p>
+              <p>@{stories[activeId].username}</p>
+            </span>
+            <span className={classes["testimony"]}>
+              {stories[activeId].testimony}
+            </span>
+          </article>
+        </div>
       </section>
 
       <section
