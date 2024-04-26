@@ -6,6 +6,7 @@
     position: relative;
     width: 100%;
     height: 100vh;
+    overflow-x: hidden;
     overflow-y: auto;
     scroll-behavior: smooth;
     scroll-snap-type: y mandatory;
@@ -71,13 +72,28 @@
 }
 
 .home .header .texts a {
-    color: var(--text-1);
-    padding: .4rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .3rem .4rem .3rem .9rem;
     border-radius: 2rem;
-    font-size: .9rem;
+    font-size: .8rem;
     font-weight: 100;
-    font-family: "okta_neue_black";
-    background-image: linear-gradient(to right, #ffa94d, #fd7e14);
+    background-image: linear-gradient(to right, var(--text-2), var(--text-1));
+}
+
+.home .header .texts a p {
+    color: var(--surface-1);
+}
+
+.home .header .texts a span {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+    background-color: var(--surface-4);
 }
 
 .home .header .texts a:hover {
@@ -161,7 +177,7 @@ section.features main .feature:nth-child(even) .texts :where(h2, p) {
 } */
 
 section.features main .feature .texts h2 {
-    color: var(--brand);
+    color: var(--text-1);
     font-family: "okta_neue_medium";
     font-weight: 900;
     font-size: .8rem;
@@ -169,7 +185,7 @@ section.features main .feature .texts h2 {
 }
 
 section.features main .feature .texts p {
-    color: var(--text-1);
+    color: var(--text-2);
     font-size: .6rem;
     text-align: center;
 }
@@ -179,6 +195,8 @@ section.discover {
 }
 
 section.discover .slideshow {
+    width: 100%;
+    height: 75%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -187,24 +205,19 @@ section.discover .slideshow {
 }
 
 section.discover .slideshow .slide {
-    display: none;
-    grid-template-rows: 10rem 6rem;
-    grid-template-columns: 50% 50%;
-    gap: 2rem 1rem;
-    justify-content: center;
-    align-items: center;
-    border-radius: 1.5rem;
-    padding: 1.2rem 1.8rem;
-}
-
-section.discover .slideshow .slide.active {
-    width: calc(100% - 3.6rem);
-    height: calc(100% - 2.4rem);
+    position: absolute;
+    inset: 0;
+    height: calc(100%);
     display: grid;
     backdrop-filter: blur(2px);
+    grid-template-rows: 50% 50%;
+    grid-template-columns: 60% 40%;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
     background-color: var(--border-line);
+    overflow: hidden;
 }
-
 
 section.discover .slideshow .slide .cover-img {
     width: 100%;
@@ -217,16 +230,17 @@ section.discover .slideshow .slide .cover-img {
 }
 
 section.discover .slideshow .slide .cover-img .img {
+    height: calc(100% - .4rem);
     border-radius: .8rem;
     background-size: cover;
     border-image: fill 0 linear-gradient(to bottom,
             var(--opaq) 0%,
             var(--opaq) 30%,
-            var(--opaq) 50%,
-            var(--text-2) 90%,
-            var(--text-2) 100%);
-    width: 100%;
-    height: 100%;
+            var(--opaq) 40%,
+            var(--text-1) 90%,
+            var(--text-1) 100%);
+    /* width: 100%; */
+    /* height: 100%; */
     display: flex;
     justify-content: center;
     align-items: flex-end;
@@ -249,7 +263,6 @@ section.discover .slideshow .slide .flat-img {
     grid-column: 1 / 2;
     justify-self: flex-start;
     align-self: flex-start;
-    object-fit: cover;
 }
 
 section.discover .slideshow .slide article {
@@ -263,12 +276,14 @@ section.discover .slideshow .slide article {
     gap: .5rem;
 }
 
-
 section.discover .slideshow .slide article p {
+    width: 80%;
+    height: 100%;
     font-family: 'okta_neue_medium';
     color: var(--text-2);
     font-size: .7rem;
     line-height: .9rem;
+    align-self: center;
 }
 
 section.discover .slideshow :is(.prev, .next) {
@@ -277,14 +292,19 @@ section.discover .slideshow :is(.prev, .next) {
     transform: translateY(-50%);
     cursor: pointer;
     z-index: 2;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 section.discover .slideshow .prev {
-    left: -1.2rem;
+    left: -.9rem;
 }
 
 section.discover .slideshow .next {
-    right: -1.2rem;
+    right: -.9rem;
 }
 
 section.discover .slideshow .next svg {
@@ -313,10 +333,11 @@ section.discover .navigation button.active {
 
 section.stories {
     gap: 2rem;
+    overflow: hidden;
 }
 
-section.stories .user-stories{
-    height: 100%;
+section.stories .user-stories {
+    height: fit-content;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -337,7 +358,7 @@ section.stories .avatars img {
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
-    opacity: 0.6;
+    opacity: 0.7 !important;
     filter: grayscale(100%);
     justify-self: center;
 }
@@ -345,7 +366,7 @@ section.stories .avatars img {
 section.stories .avatars img.active {
     width: 2.5rem;
     height: 2.5rem;
-    opacity: 1;
+    opacity: 1 !important;
     filter: none;
     border: 2px solid var(--text-1);
 }
@@ -363,13 +384,13 @@ section.stories article {
 
 section.stories article::after {
     content: "";
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border-width: 7px;
-        border-style: solid;
-        border-color: transparent transparent var(--border-line) transparent;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 7px;
+    border-style: solid;
+    border-color: transparent transparent var(--border-line) transparent;
 }
 
 section.stories article .names {

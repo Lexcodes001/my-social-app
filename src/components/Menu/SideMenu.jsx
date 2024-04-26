@@ -1,6 +1,15 @@
 import classes from "./SideMenu.module.css";
 import { motion } from "framer-motion";
 
+const variants = {
+  open: {
+    transition: { staggerChildren: 0.07, delayChildren: 0.2 },
+  },
+  closed: {
+    transition: { staggerChildren: 0.05, staggerDirection: -1 },
+  },
+};
+
 const SideMenu = ({ isOpen, setIsOpen, children }) => {
 
   return (
@@ -42,19 +51,7 @@ const SideMenu = ({ isOpen, setIsOpen, children }) => {
         }}
         className={`${classes["menu-container"]}`}
       >
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={{
-            opacity: 1,
-            x: 0,
-          }}
-          exit={{
-            opacity: 0,
-            x: -30,
-            // transition: { duration: 2 }
-          }}
-          className={`${classes["items"]}`}
-        >
+        <motion.div variants={variants} className={`${classes["items"]}`}>
           {children}
         </motion.div>
       </motion.div>

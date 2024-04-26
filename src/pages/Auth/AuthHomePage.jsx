@@ -24,6 +24,32 @@ import DPF1 from "../../assets/images/dpF1.jpg";
 import DPF2 from "../../assets/images/dpF2.jpg";
 import { motion, AnimatePresence } from "framer-motion";
 
+const variants = {
+  enter: (direction) => {
+    return {
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+    };
+  },
+  center: {
+    zIndex: 1,
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction) => {
+    return {
+      zIndex: 0,
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+    };
+  },
+};
+
+const swipeConfidenceThreshold = 10000;
+const swipePower = (offset, velocity) => {
+  return Math.abs(offset) * velocity;
+};
+
 const AuthHomePage = () => {
   const Links = [
     {
@@ -148,44 +174,31 @@ const AuthHomePage = () => {
     },
   ];
 
-  const variants = {
-    enter: (direction) => {
-      return {
-        x: direction > 0 ? 1000 : -1000,
-        opacity: 0,
-      };
-    },
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction) => {
-      return {
-        zIndex: 0,
-        x: direction > 0 ? 1000 : -1000,
-        opacity: 0,
-      };
-    },
-  };
-
-  const swipeConfidenceThreshold = 10000;
-  const swipePower = (offset, velocity) => {
-    return Math.abs(offset) * velocity;
-  };
-
-  const [activeId, setActiveId] = useState(3);
+  const [[activeId, direction1], setActiveId] = useState([0, 0]);
   const [newStories, setNewStories] = useState([]);
+
+  const [prevIndex, setPrevIndex] = useState({});
 
   const [[page, direction], setPage] = useState([0, 0]);
 
-  const paginate = (newDirection) => {
-    if (page === 3 && newDirection === 1) {
-      setPage([0, newDirection]);
-    } else if (page === 0 && newDirection === -1) {
-      setPage([3, newDirection]);
+  const paginate = (mode, newDirection) => {
+    if (mode === "discoveries") {
+      if (page === 3 && newDirection === 1) {
+        setPage([0, newDirection]);
+      } else if (page === 0 && newDirection === -1) {
+        setPage([3, newDirection]);
+      } else {
+        setPage([page + newDirection, newDirection]);
+      }
     } else {
-      setPage([page + newDirection, newDirection]);
+      if (activeId === 6 && newDirection === 1) {
+        setActiveId([0, newDirection]);
+      } else if (activeId === 0 && newDirection === -1) {
+        setActiveId([6, newDirection]);
+      } else {
+        setActiveId([activeId + newDirection, newDirection]);
+      }
+      console.log([activeId, newDirection]);
     }
   };
 
@@ -201,8 +214,17 @@ const AuthHomePage = () => {
       stories[activeStoryIndex],
       ...remainingStoryIndexes.slice(3),
     ];
-    setNewStories(reorderedStories);
+    setNewStories([...reorderedStories]);
   }, [activeId]);
+
+  useEffect(() => {
+    const newPrevIndex = {};
+    newStories.forEach((story, index) => {
+      newPrevIndex[story.id] =
+        prevIndex[story.id] !== undefined ? prevIndex[story.id] : index;
+    });
+    setPrevIndex(newPrevIndex);
+  }, [newStories]);
 
   return (
     <main className={classes["main"]}>
@@ -215,7 +237,20 @@ const AuthHomePage = () => {
               lobortis.
             </p>
             <NavHashLink className={classes["action"]} to={"/auth#footer"}>
-              Continue
+              <p>Continue</p>
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="18"
+                  viewBox="0 -960 960 960"
+                  width="18"
+                >
+                  <path
+                    fill="var(--text-2)"
+                    d="m560-240-56-58 142-142H160v-80h486L504-662l56-58 240 240-240 240Z"
+                  />
+                </svg>
+              </span>
             </NavHashLink>
           </div>
           <img src={Hero} alt="hero image" />
@@ -293,98 +328,95 @@ const AuthHomePage = () => {
         <h1>Discover</h1>
 
         <div className={classes["slideshow"]}>
-          <AnimatePresence initial={false} custom={direction}>
-            {discoveries.map((item) => (
-              <motion.div
-                key={item.header}
-                className={`${classes["slide"]} ${
-                  page === item.id && classes.active
-                } ${page === item.id - 1 && classes.leftActive} ${
-                  page === item.id + 1 && classes.rightActive
-                }`}
-                custom={direction}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                //exit="exit"
-                transition={{
-                  x: { type: "spring", stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 },
-                }}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={1}
-                onDragEnd={(e, { offset, velocity }) => {
-                  const swipe = swipePower(offset.x, velocity.x);
+          <motion.div
+            key={page}
+            className={`${classes["slide"]}`}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: "spring", stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 },
+            }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={1}
+            onDragEnd={(e, { offset, velocity }) => {
+              const swipe = swipePower(offset.x, velocity.x);
 
-                  if (swipe < -swipeConfidenceThreshold) {
-                    paginate(1);
-                  } else if (swipe > swipeConfidenceThreshold) {
-                    paginate(-1);
-                  }
+              if (swipe < -swipeConfidenceThreshold) {
+                paginate("discoveries", 1);
+              } else if (swipe > swipeConfidenceThreshold) {
+                paginate("discoveries", -1);
+              }
+            }}
+          >
+            <div className={classes["cover-img"]}>
+              <div
+                className={classes["img"]}
+                style={{
+                  backgroundImage: `url(${discoveries[page].main_img})`,
                 }}
               >
-                <div className={classes["cover-img"]}>
-                  <div
-                    className={classes["img"]}
-                    style={{ backgroundImage: `url(${item.main_img})` }}
-                  >
-                    <h3>{item.header}</h3>
-                  </div>
-                </div>
-                <motion.img
-                  className={classes["flat-img"]}
-                  src={item.flat_img}
-                  alt="flat-img"
-                />
-                <motion.article>
-                  <p>{item.desc}</p>
-                </motion.article>
-              </motion.div>
-            ))}
-            <div className={classes["next"]} onClick={() => paginate(1)}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                version="1.1"
-                x="0px"
-                y="0px"
-                width="40px"
-                height="40px"
-                viewBox="0 0 100 125"
-                style={{ enableBackground: "new 0 0 100 100" }}
-              >
-                <switch>
-                  <g>
-                    <path
-                      fill="var(--text-1)"
-                      d="M97.5,50C97.5,23.8,76.2,2.5,50,2.5S2.5,23.8,2.5,50c0,26.2,21.3,47.5,47.5,47.5S97.5,76.2,97.5,50z M50.2,68.7L36.1,54.5    c-1.2-1.2-1.9-2.9-1.9-4.5c0-1.6,0.6-3.3,1.9-4.5l14.2-14.2c2.5-2.5,6.5-2.5,9,0c2.5,2.5,2.5,6.5,0,9L49.6,50l9.7,9.7    c2.5,2.5,2.5,6.5,0,9C56.8,71.2,52.7,71.2,50.2,68.7z"
-                    />
-                  </g>
-                </switch>
-              </svg>
+                <h3>{discoveries[page].header}</h3>
+              </div>
             </div>
-            <div className={classes["prev"]} onClick={() => paginate(-1)}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                version="1.1"
-                x="0px"
-                y="0px"
-                width="40px"
-                height="40px"
-                viewBox="0 0 100 125"
-                style={{ enableBackground: "new 0 0 100 100" }}
-              >
-                <switch>
-                  <g>
-                    <path
-                      fill="var(--text-1)"
-                      d="M97.5,50C97.5,23.8,76.2,2.5,50,2.5S2.5,23.8,2.5,50c0,26.2,21.3,47.5,47.5,47.5S97.5,76.2,97.5,50z M50.2,68.7L36.1,54.5    c-1.2-1.2-1.9-2.9-1.9-4.5c0-1.6,0.6-3.3,1.9-4.5l14.2-14.2c2.5-2.5,6.5-2.5,9,0c2.5,2.5,2.5,6.5,0,9L49.6,50l9.7,9.7    c2.5,2.5,2.5,6.5,0,9C56.8,71.2,52.7,71.2,50.2,68.7z"
-                    />
-                  </g>
-                </switch>
-              </svg>
-            </div>
-          </AnimatePresence>
+            <motion.img
+              className={classes["flat-img"]}
+              src={discoveries[page].flat_img}
+              alt="flat-img"
+            />
+            <motion.article>
+              <p>{discoveries[page].desc}</p>
+            </motion.article>
+          </motion.div>
+
+          <div
+            className={classes["next"]}
+            onClick={() => paginate("discoveries", 1)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              version="1.1"
+              width="40px"
+              height="40px"
+              viewBox="0 0 100 100"
+              // style={{ enableBackground: "new 0 0 100 100" }}
+            >
+              <switch>
+                <g>
+                  <path
+                    fill="var(--brand)"
+                    d="M97.5,50C97.5,23.8,76.2,2.5,50,2.5S2.5,23.8,2.5,50c0,26.2,21.3,47.5,47.5,47.5S97.5,76.2,97.5,50z M50.2,68.7L36.1,54.5    c-1.2-1.2-1.9-2.9-1.9-4.5c0-1.6,0.6-3.3,1.9-4.5l14.2-14.2c2.5-2.5,6.5-2.5,9,0c2.5,2.5,2.5,6.5,0,9L49.6,50l9.7,9.7    c2.5,2.5,2.5,6.5,0,9C56.8,71.2,52.7,71.2,50.2,68.7z"
+                  />
+                </g>
+              </switch>
+            </svg>
+          </div>
+          <div
+            className={classes["prev"]}
+            onClick={() => paginate("discoveries", -1)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              version="1.1"
+              width="40px"
+              height="40px"
+              viewBox="0 0 100 100"
+              // style={{ enableBackground: "new 0 0 100 100" }}
+            >
+              <switch>
+                <g>
+                  <path
+                    fill="var(--brand)"
+                    d="M97.5,50C97.5,23.8,76.2,2.5,50,2.5S2.5,23.8,2.5,50c0,26.2,21.3,47.5,47.5,47.5S97.5,76.2,97.5,50z M50.2,68.7L36.1,54.5    c-1.2-1.2-1.9-2.9-1.9-4.5c0-1.6,0.6-3.3,1.9-4.5l14.2-14.2c2.5-2.5,6.5-2.5,9,0c2.5,2.5,2.5,6.5,0,9L49.6,50l9.7,9.7    c2.5,2.5,2.5,6.5,0,9C56.8,71.2,52.7,71.2,50.2,68.7z"
+                  />
+                </g>
+              </switch>
+            </svg>
+          </div>
         </div>
         <div className={classes["navigation"]}>
           {discoveries.map((item) => (
@@ -406,28 +438,57 @@ const AuthHomePage = () => {
         <h1>Stories</h1>
         <div className={classes["user-stories"]}>
           <div className={classes["avatars"]}>
-            {newStories.map((elem) => (
-              <img
-                onClick={() => {
-                  setActiveId(elem.id);
-                }}
-                className={`${activeId === elem.id && classes["active"]}`}
-                src={elem.avatar}
-                alt={`user${elem.id}avatar`}
-              />
-            ))}
+            <AnimatePresence>
+              {newStories.map((elem, index) => (
+                <motion.img
+                  key={elem.id}
+                  layout
+                  transition={{ duration: 0.3 }}
+                  onClick={() => {
+                    setActiveId([elem.id, elem.id < activeId ? -1 : 1]);
+                  }}
+                  className={`${activeId === elem.id && classes["active"]}`}
+                  src={elem.avatar}
+                  alt={`user${elem.id}avatar`}
+                />
+              ))}
+            </AnimatePresence>
           </div>
 
-          <article>
+          <motion.article
+            key={activeId}
+            className={`${classes["slide"]}`}
+            custom={direction1}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: "spring", stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 },
+            }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={1}
+            onDragEnd={(e, { offset, velocity }) => {
+              const swipe = swipePower(offset.x, velocity.x);
+
+              if (swipe < -swipeConfidenceThreshold) {
+                paginate("stories", 1);
+              } else if (swipe > swipeConfidenceThreshold) {
+                paginate("stories", -1);
+              }
+            }}
+          >
             <span className={classes["names"]}>
               <p>{stories[activeId].name}</p>
               <p>•</p>
               <p>@{stories[activeId].username}</p>
             </span>
             <span className={classes["testimony"]}>
-              {stories[activeId].testimony}
+              {stories[activeId].testimony} {activeId}
             </span>
-          </article>
+          </motion.article>
         </div>
       </section>
 

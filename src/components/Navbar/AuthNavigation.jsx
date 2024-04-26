@@ -8,7 +8,24 @@ import { ThemeContext } from "../../context/ThemeContext";
 import NavigationWrapper from "./NavigationWrapper";
 import SideMenu from "../Menu/SideMenu";
 import Hamburger from "hamburger-react";
-import { AnimatePresence } from "framer-motion";
+import {motion, AnimatePresence } from "framer-motion";
+
+const variants = {
+  open: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      y: { stiffness: 1000, velocity: -100 },
+    },
+  },
+  closed: {
+    y: 50,
+    opacity: 0,
+    transition: {
+      y: { stiffness: 1000 },
+    },
+  },
+};
 
 const AuthNavigation = () => {
   const [isOpen, setIsOpen] = useState();
@@ -109,16 +126,17 @@ const AuthNavigation = () => {
         <div className={`${genclasses["center"]}`}>
           <div className={`${classes["sm-screen"]}`}></div>
           <div className={`${classes["lg-screen"]}`}>
-            
             {Links.map((link) => (
               <HashLink
                 key={link.id}
                 smooth
                 to={link.url}
-                onClick={()=>{
-                  setPageName(link.url)
+                onClick={() => {
+                  setPageName(link.url);
                 }}
-                className={`${classes["link"]} ${pageName === link.url && classes.active}`}
+                className={`${classes["link"]} ${
+                  pageName === link.url && classes.active
+                }`}
               >
                 <span className={`${classes["icon"]}`}>{link.icon}</span>
                 <span className={`${classes["text"]}`}>{link.id}</span>
@@ -161,6 +179,9 @@ const AuthNavigation = () => {
               <HashLink
                 key={link.id}
                 to={link.url}
+                variants={variants}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
                 activeClassName={[classes["div-link"], classes.active].join(
                   " "
                 )}
@@ -169,9 +190,12 @@ const AuthNavigation = () => {
                 smooth
               >
                 <span className={`${classes["icon"]}`}>{link.icon}</span>
-                <span className={`${classes["text"]}`}>
+                <motion.span
+                  variants={variants}
+                  className={`${classes["text"]}`}
+                >
                   {link.id.toLocaleUpperCase()}
-                </span>
+                </motion.span>
               </HashLink>
             ))}
           </SideMenu>
